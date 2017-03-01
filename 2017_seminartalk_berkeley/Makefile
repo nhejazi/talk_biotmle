@@ -1,4 +1,4 @@
-TITLE = 2017_biotmle_talk
+TITLE = 2017_berkeley_biotmle
 
 .PHONY : all
 all: $(TITLE).pdf notes web clean

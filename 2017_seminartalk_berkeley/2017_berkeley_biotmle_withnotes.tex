@@ -1,6 +1,6 @@
-\documentclass[12pt,t]{beamer}
+\documentclass[12pt,t,handout]{beamer}
 \usepackage{graphicx}
-\setbeameroption{hide notes}
+\setbeameroption{show notes}
 \setbeamertemplate{note page}[plain]
 \usepackage{listings}
 \usepackage{datetime}
@@ -12,6 +12,7 @@
 \usepackage{bibentry}
 \nobibliography*
 
+\def\notescolors{1}
 \input{header.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,17 +24,18 @@
 \author{\href{http://nimahejazi.org}{Nima Hejazi}}
 \institute{Division of Biostatistics \\
            University of California, Berkeley \\
-           \url{https://www.stat.berkeley.edu/~nhejazi}
+           \href{https://www.stat.berkeley.edu/~nhejazi}
+             {\tt \scriptsize \color{foreground} stat.berkeley.edu/\textasciitilde{}nhejazi}
           }
 \date{
   \href{http://nimahejazi.org}
       {\tt \scriptsize \color{foreground} nimahejazi.org}
   \\[-4pt]
-  \href{https://github.com/nhejazi}
-      {\tt \scriptsize \color{foreground} github.com/nhejazi}
-  \\[-4pt]
   \href{https://twitter.com/nshejazi}
-      {\tt \scriptsize \color{foreground} @nshejazi}
+      {\tt \scriptsize \color{foreground} twitter/@nshejazi}
+  \\[-4pt]
+  \href{https://github.com/nhejazi}
+      {\tt \scriptsize \color{foreground} github/nhejazi}
 }
 
 
@@ -45,42 +47,46 @@
 \frame{
   \titlepage
 
-  \vfill \hfill \includegraphics[height=6mm]{Figs/cc-zero.png} \vspace*{-1cm}
+  \vfill \hfill \includegraphics[height=6mm]{Figs/cc-zero.png} \vspace*{-0.75cm}
 
   \note{These are slides for a talk given most recently at the Division of
     Biostatistics seminar series, at the University of California, Berkeley on
     13 March 2017.
 
-    Source: {\tt https://github.com/nhejazi/talk-biotmle-2017} \\
-    Slides: {\tt http://bit.ly/CBB2016\_nonotes} \\
-    With notes: {\tt http://bit.ly/CBB2016\_wnotes}
+    Source: {\tt https://github.com/nhejazi/talk-biotmle} \\
+    Slides: {\tt https://goo.gl/r3zsu6} \\
+    With notes: {\tt https://goo.gl/6ou8YR}
 }
 }
 }
+
 
 
 \begin{frame}[c]{Preview: Summary}
 \only<1>{\addtocounter{framenumber}{-1}}
 
-  \begin{enumerate}
-  	\itemsep12pt
-  	\item We've developed a protocol for analyzing RRBS data.
-  	\item TMLE provides a robust framework for the analysis of
-          miRNA data, comparing favorably against LIMMA.
-  	\item The data-adaptive multiple testing approach developed
-          can successfully be applied to screening (based on
-          variable importance measures).
-  	\item A TMLE-based technique for estimation/inference of DNA
-          methylation (in particular, 450K data) has been
-          formulated, and an R package is in development.
-  	\item Combining data-adaptive multiple testing with the above
-    	  TMLE method promises to provide a robust framework for
-          analyzing DNA methylation data.
-  \end{enumerate}
+\begin{center}
+\begin{itemize}
+  \itemsep12pt
+  \item TMLE provides a robust framework for the analysis of miRNA data,
+    comparing favorably against LIMMA.
+  \item The data-adaptive multiple testing approach developed can successfully
+    be applied to screening (based on variable importance measures).
+  \item A TMLE-based technique for estimation/inference of DNA methylation
+    (in particular, 450K data) has been formulated, and an R package is in
+    development.
+  \item Combining data-adaptive multiple testing with the above TMLE method
+    promises to provide a robust framework for analyzing DNA methylation data.
+\end{itemize}
+\end{center}
 
-  \note{It's always good to include a summary.}
+
+\note{We'll go over this summary again at the end of the talk. Hopefully, it
+  will all make more sense then.
+}
 
 \end{frame}
+
 
 
 \begin{frame}[fragile,c]{}
@@ -103,6 +109,7 @@
 \end{minipage}
 \end{center}
 
+
 \note{This is an edited version of an email I got from a collaborator,
   in response to an analysis report that I had sent him.
 
@@ -119,103 +126,114 @@
 \end{frame}
 
 
+
 \begin{frame}[c]{Analyzing RRBS Data, I}
 
 \begin{center}
 \begin{itemize}
-	\item ...
+  \item ...
   \item ...
 \end{itemize}
 \end{center}
 
-\note{}
+
+\note{...}
 
 \end{frame}
+
 
 
 \begin{frame}[c]{Analyzing RRBS Data, II}
 
 \begin{center}
 \begin{itemize}
-	\item ...
+  \item ...
   \item ...
 \end{itemize}
 \end{center}
 
-\note{}
+
+\note{...}
 
 \end{frame}
+
 
 
 \begin{frame}[c]{Analyzing RRBS Data, III}
 
 \begin{center}
 \begin{itemize}
-	\item ...
-    \item ...
+  \item ...
+  \item ...
 \end{itemize}
 \end{center}
 
-\note{}
+
+\note{...}
 
 \end{frame}
+
 
 
 \begin{frame}[c]{Analyzing RRBS Data, I}
 
 \begin{center}
 \begin{itemize}
-	\item ...
-    \item ...
+  \item ...
+  \item ...
 \end{itemize}
 \end{center}
 
-\note{}
+
+\note{...}
 
 \end{frame}
+
 
 
 \begin{frame}[c]{Analyzing RRBS Data, II}
 
 \begin{center}
 \begin{itemize}
-	\item ...
+  \item ...
   \item ...
 \end{itemize}
 \end{center}
 
-\note{}
+
+\note{...}
 
 \end{frame}
+
 
 
 \begin{frame}[c]{Review: Summary}
 
-  \begin{enumerate}
-  	\itemsep12pt
-  	\item We've developed a protocol for analyzing RRBS data.
-  	\item TMLE provides a robust framework for the analysis of
-          miRNA data, comparing favorably against LIMMA.
-  	\item The data-adaptive multiple testing approach developed
-          can successfully be applied to screening (based on
-          variable importance measures).
-  	\item A TMLE-based technique for estimation/inference of DNA
-          methylation (in particular, 450K data) has been
-          formulated, and an R package is in development.
-  	\item Combining data-adaptive multiple testing with the above
-    	  TMLE method promises to provide a robust framework for
-          analyzing DNA methylation data.
-  \end{enumerate}
+\begin{center}
+\begin{itemize}
+  \itemsep12pt
+  \item TMLE provides a robust framework for the analysis of miRNA data,
+    comparing favorably against LIMMA.
+  \item The data-adaptive multiple testing approach developed can successfully
+    be applied to screening (based on variable importance measures).
+  \item A TMLE-based technique for estimation/inference of DNA methylation
+    (in particular, 450K data) has been formulated, and an R package is in
+    development.
+  \item Combining data-adaptive multiple testing with the above TMLE method
+    promises to provide a robust framework for analyzing DNA methylation data.
+\end{itemize}
+\end{center}
 
-  \note{It's always good to include a summary.}
+\note{It's always good to include a summary.}
 
 \end{frame}
+
 
 
 \begin{frame}[c]{}
 
 \Large
-Slides: \href{http://bit.ly/biotmle2017_wnotes}{link} \quad
+Slides: \href{https://goo.gl/6ou8YR}{https://goo.gl/6ou8YR} \quad
 \includegraphics[height=5mm]{Figs/cc-zero.png}
 
 \vspace{10mm}
@@ -224,17 +242,17 @@ Slides: \href{http://bit.ly/biotmle2017_wnotes}{link} \quad
 
 \vspace{10mm}
 
-\href{https://github.com/nhejazi}{\tt github.com/nhejazi}
+\href{https://github.com/nhejazi}{\tt github/nhejazi}
 
 \vspace{10mm}
 
-\href{https://twitter.com/nshejazi}{\tt @nshejazi}
+\href{https://twitter.com/nshejazi}{\tt twitter/@nshejazi}
 
 
-\note{
-  Here's where you can find me, as well as the slides for this talk.
-}
+\note{Here's where you can find me, as well as the slides for this talk.}
+
 \end{frame}
+
 
 
 \end{document}

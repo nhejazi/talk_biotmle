@@ -1,8 +1,21 @@
 # Biomarker Discovery with Influence Curve Shrinkage [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
-> Various materials for presentations on the application of Targeted Learning
-> for biomarker discovery, using empirical Bayes shrinkage of influence curve
-> estimates
+> Materials for a presentation given at a meeting of the Division of
+> Biostatistics seminar series, at the University of California, Berkeley
+
+---
+
+## Summary
+
+Brief description here...
+
+---
+
+## References
+
+* ...
+
+* ...
 
 ---
 
