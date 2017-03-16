@@ -1,8 +1,7 @@
-# Biomarker Discovery with Influence Curve Shrinkage [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+# empirical Bayes and asymptotically linear parameters
 
-> Various materials for presentations on the application of Targeted Learning
-> for biomarker discovery, using empirical Bayes shrinkage of influence curve
-> estimates
+> Materials for a presentation given at a meeting of the Division of
+> Biostatistics seminar series, at the University of California, Berkeley
 
 ---
 
@@ -16,7 +15,10 @@ This work would not have been possible without the generous advice of Profs.
 
 ## License
 
-&copy; 2017 [Nima Hejazi](http://nimahejazi.org)
-
-The contents of this repository are distributed under the MIT license. See file
-`LICENSE` for details.
+To the extent possible under law, [Nima Hejazi](http://nimahejazi.org)
+has waived all copyright and related or neighboring rights to
+&ldquo;[empirical Bayes and asymptotically linear
+parameters](https://www.stat.berkeley.edu/~nhejazi/present/2017_berkeley_biotmle.pdf)&rdquo;.
+This work is published from the United States.
+<br/>
+[![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png)](http://creativecommons.org/publicdomain/zero/1.0/)

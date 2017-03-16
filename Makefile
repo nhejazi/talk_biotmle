@@ -1,7 +1,7 @@
 TITLE = 2017_berkeley_biotmle
 
 .PHONY : all
-all: $(TITLE).pdf notes web clean
+all: $(TITLE).pdf notes clean
 
 $(TITLE).pdf: $(TITLE).tex header.tex
 	xelatex $<
