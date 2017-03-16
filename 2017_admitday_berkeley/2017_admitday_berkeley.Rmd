@@ -1,18 +1,22 @@
 ---
 title: "Targeted Learning for Biomarker Discovery"
 subtitle: "⚔<br/>with biotmle"
-author: "Nima Hejazi"
-date: "2017/03/20"
+author: "[Nima Hejazi](http://nimahejazi.org)"
+date: "`r format(Sys.time(), "%Y %b %d (%a), %H:%M:%S")`"
 output:
   xaringan::moon_reader:
     lib_dir: libs
+    chakra: libs/remark-latest.min.js
+    css: ["default", "custom.css"]
     nature:
-      highlightStyle: github
+      highlightStyle: zenburn
       highlightLines: true
 ---
 
-```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE)
+```{r knitr_setup, echo=FALSE}
+knitr::opts_chunk$set(fig.width = 8, fig.height = 6,
+					  dpi = 300, fig.cap="", fig.align='center')
+showtext::showtext.opts(dpi = 300)
 ```
 
 background-image: url(https://upload.wikimedia.org/wikipedia/commons/b/be/Sharingan_triple.svg)
@@ -20,6 +24,27 @@ background-image: url(https://upload.wikimedia.org/wikipedia/commons/b/be/Sharin
 ???
 
 Image credit: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Sharingan_triple.svg)
+
+---
+
+# How to access these slides
+## (and associated code)
+
+### Via git:
+
+```{bash, eval=FALSE}
+git clone https://github.com/saraemoore/Rdataviz2017.git
+```
+
+### Download directly:
+https://github.com/saraemoore/Rdataviz2017/archive/master.zip
+
+### View online:
+http://saraemoore.github.io/Rdataviz2017
+
+???
+
+* I won't be showing all the code on the slides today, but it's all available in the R Markdown document used to create these slides in this repository on github.
 
 ---
 class: center, middle
