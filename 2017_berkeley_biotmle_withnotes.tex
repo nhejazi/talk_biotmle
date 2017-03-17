@@ -47,6 +47,10 @@
 \frame{
   \titlepage
 
+  \vspace{-2em}
+
+  \centerline{\href{https://goo.gl/6ou8YR}{\tt \scriptsize \underline{slides}: goo.gl/6ou8YR}}
+
   \vfill \hfill \includegraphics[height=6mm]{Figs/cc-zero.png} \vspace*{-0.75cm}
 
   \note{These are slides for a talk given most recently at the Division of
@@ -89,53 +93,83 @@
 
 
 
-\begin{frame}[fragile,c]{}
+\begin{frame}[c]{Targeted Minimum Loss-Based Estimation (TMLE)}
 
 \begin{center}
-\begin{minipage}[c]{9.3cm}
-\begin{semiverbatim}
-\lstset{basicstyle=\normalsize}
-\begin{lstlisting}[linewidth=9.3cm]
- Karl -- this is very interesting,
- however you used an old version of
- the data (n=143 rather than n=226).
-
- I'm really sorry you did all that
- work on the incomplete dataset.
-
- Bruce
-\end{lstlisting}
-\end{semiverbatim}
-\end{minipage}
+\begin{itemize}
+  \item TMLE produces a well-defined, unbiased, efficient substitution estimator
+    of target parameters of a data-generating distribution.
+  \item It is generally an iterative procedure (though there is now a general
+    one-step) that updates an initial (super learner) estimate  of the relevant
+    part $Q_0$ of the data generating distribution $P_0$, possibly using an
+    estimate of a nuisance parameter $g_0$.
+  \item Like corresponding A-IPTW estimators, removes asymptotic residual bias
+    of initial estimator for the target parameter, if it uses a consistent
+    estimator of $g_0$, thus {\em Doubly Robust}.
+  \item If initial estimator was consistent for the target parameter, the
+    additional fitting of the data in the targeting step may remove finite
+    sample bias, and  preserves consistency property of the initial estimator.
+\end{itemize}
 \end{center}
 
+\note{...}
 
-\note{This is an edited version of an email I got from a collaborator,
-  in response to an analysis report that I had sent him.
+\end{frame}
 
-  I try to always include some brief data summaries at the start of
-  such reports. By doing so, he immediately saw that I had an old
-  version of the data.
 
-  Because I'd set things up carefully, I could just substitute in the
-  newer dataset, type ``{\tt make}'', and get the revised report.
 
-  This is a reproducibility success story. But it took me a long
-  time to get to this point.
+\begin{frame}[c]{TMLE via Machine Learning}
+
+\begin{center}
+\begin{itemize}
+  \item Natural use of machine learning methods for the estimation of both $Q_0$
+    and $g_0$.
+  \item Focuses effort to achieve minimal bias and asymptotic semi-parametric
+    efficiency bound for the variance, but still get inference (with some
+    assumptions).
+\end{itemize}
+\end{center}
+
+\note{...}
+
+\end{frame}
+
+
+
+\begin{frame}[c]{Inference (Standard errors) via Influence Curve (IC)}
+
+\begin{center}
+\begin{itemize}
+\item influence curve\index{influence curve} for estimator is:
+\begin{multline*}
+IC_n(O_i)=\left (\frac{I(A_i=a_h)}{g_n(a_h\mid W_i)}-\frac{I(A_i=a_l)}{g_n(a_l\mid W_i)}\right)(Y-\bar{Q}^1_n(A_i,W_i))\\
++\bar{Q}^1_n(a_h,W_i)-\bar{Q}^1_n(a_l,W_i)-\psi_{TMLE,n},
+\end{multline*}
+\item Sample variance of the estimated influence curve:
+\[\textstyle S^2(IC_n)=\frac{1}{n}\sum_{i=1}^n\left(IC_n(o_i)\right)^2.\]
+\item Use sample variance to estimate the standard error of our estimator:
+\[SE_n=\sqrt{\frac{S^2(IC_n)}{n}}.\]
+\item Use this to derive uncertainty measures (p-values, confidence intervals, etc.).
+\end{itemize}
+\end{center}
+
+\note{...}
+
+\end{frame}
+
+
+
+\begin{frame}[c]{Repeating Estimates of Variable Importance one biomarker at a
+  time}
+
+\Large{
+\begin{itemize}
+\item Consider this is repeated for $j=1,\ldots,J$  different biomarkers, so that one has, for each $j$: 
+$$\Psi_j(Q_{j,n}^{*}),S_j^2(IC_{j,n})$$
+or estimate of variable importance and standard error for all $J$.
+\item Propose an existing joint-inferential procedure that can add some finite-sample robustness to an estimator that can be highly variable.
+\end{itemize}
 }
-\end{frame}
-
-
-
-\begin{frame}[c]{Analyzing RRBS Data, I}
-
-\begin{center}
-\begin{itemize}
-  \item ...
-  \item ...
-\end{itemize}
-\end{center}
-
 
 \note{...}
 
@@ -143,15 +177,24 @@
 
 
 
-\begin{frame}[c]{Analyzing RRBS Data, II}
+\begin{frame}[c]{LIMMA: Linear Models for Microarray Data}
 
 \begin{center}
 \begin{itemize}
-  \item ...
-  \item ...
+\item Thus, one can define a standard t-test statistic for a general (asymptotically linear) parameter estimate (over $g=1,\ldots,G$) as:
+\[
+t_g = \frac{\sqrt{n}(\Psi_g(P_n)-\psi_0)}{S_g(IC_{g,n})}
+\]
+\item Consider the moderated t-statistic proposed by \cite{Smyth:2005qy}:
+\[
+\tilde{t}_g = \frac{\sqrt{n}(\Psi_g(P_n)-\psi_0)}{\tilde{S}_g^2}
+\]
+where the posterior estimate of the variance of the influence curve is  
+\[
+\tilde{S}^2_g = \frac{d_0 S^2_0 +d_g S^2_g(IC_{g,n})}{d_0+d_g}
+\]
 \end{itemize}
 \end{center}
-
 
 \note{...}
 
@@ -159,15 +202,20 @@
 
 
 
-\begin{frame}[c]{Analyzing RRBS Data, III}
+\begin{frame}[c]{Implement for Any Asymptotically Linear Parameter}
 
 \begin{center}
 \begin{itemize}
-  \item ...
-  \item ...
+\item Treat like one-sample problem estimate of parameter with associated SE from IC.
+\item Just need to get estimate for each $g$ as well as the plug-in IC for every observation for that $g$ and repeat for all $g$.
+\item Transform data original $G x n$ matrix where new entries are:
+\[
+Y^*_{g,i} = IC_{g,n}(O_i; P_n)+\Psi_g(P_n)
+\]
+\item Since the average of the $IC_{g,n}$ across the columns (units) for a single $g$ will be 0, the average of this transform will be the original estimate $\Psi_g(P_n)$.
+\item For simplicity assume the null value is $\psi_0 = 0$ for all $g$.  Then, running {\em limma} package on this transform,$Y^*_{g,i}$,  will generate multiple testing corrections based on presented above for $\tilde{t}_g$.
 \end{itemize}
 \end{center}
-
 
 \note{...}
 
@@ -175,15 +223,17 @@
 
 
 
-\begin{frame}[c]{Analyzing RRBS Data, I}
+\begin{frame}[c]{Why LIMMA approach in this context?}
 
 \begin{center}
 \begin{itemize}
-  \item ...
-  \item ...
+\item Often times these analyses based on relatively small samples.
+\item want data-adaptive estimate but at least with standard implementation of these estimates (estimation equation, substitution,...), the SE's can be non-robust.
+\item practically, one can get "significant" estimates of variable importance measures that are driven by poorly and underestimated $S^2_g(IC_{g,n})$. 
+\item LIMMA shrinks these $S^2_g(IC_{g,n})$ by making them bigger and thus takes biomarkers with small parameter estimates but very small $S^2_g(IC_{g,n})$ out of statistical significance.
+\item Also, just seems to work very well...
 \end{itemize}
 \end{center}
-
 
 \note{...}
 
@@ -191,15 +241,53 @@
 
 
 
-\begin{frame}[c]{Analyzing RRBS Data, II}
+\begin{frame}[c]{Data Analysis I}
 
 \begin{center}
 \begin{itemize}
-  \item ...
-  \item ...
+  \itemsep12pt
+  \item $\dots$
+  \item $\dots$
+  \item $\dots$
+  \item $\dots$
 \end{itemize}
 \end{center}
 
+\note{...}
+
+\end{frame}
+
+
+
+\begin{frame}[c]{Data Analysis II}
+
+\begin{center}
+\begin{itemize}
+  \itemsep12pt
+  \item $\dots$
+  \item $\dots$
+  \item $\dots$
+  \item $\dots$
+\end{itemize}
+\end{center}
+
+\note{...}
+
+\end{frame}
+
+
+
+\begin{frame}[c]{Data Analysis III}
+
+\begin{center}
+\begin{itemize}
+  \itemsep12pt
+  \item $\dots$
+  \item $\dots$
+  \item $\dots$
+  \item $\dots$
+\end{itemize}
+\end{center}
 
 \note{...}
 
@@ -229,12 +317,40 @@
 \end{frame}
 
 
+\begin{frame}{Acknowledgments}
+
+\vspace{18pt}
+
+\begin{tabular}{@{}l@{\hspace{1.5cm}}l@{}}
+Alan Hubbard & \footnotesize \lolit University of CA, Berkeley \\
+\\[0.5ex]
+Mark van der Laan & \footnotesize \lolit University of CA, Berkeley \\
+
+%\\[2ex]
+
+%Collaborator, the first & \footnotesize \lolit University or Institution 2 \\
+%Collaborator, the second & \footnotesize \lolit University or Institution 2 \\
+\end{tabular}
+
+\vspace{10mm}
+
+%NIH - funding source ?
+
+\note{}
+
+\end{frame}
+
+
 
 \begin{frame}[c]{}
 
 \Large
-Slides: \href{https://goo.gl/6ou8YR}{https://goo.gl/6ou8YR} \quad
+Slides: \href{https://goo.gl/6ou8YR}{goo.gl/6ou8YR} \quad
 \includegraphics[height=5mm]{Figs/cc-zero.png}
+
+\vspace{10mm}
+
+\href{https://www.stat.berkeley.edu/~nhejazi}{\tt stat.berkeley.edu/\textasciitilde{}nhejazi}
 
 \vspace{10mm}
 
@@ -242,11 +358,11 @@ Slides: \href{https://goo.gl/6ou8YR}{https://goo.gl/6ou8YR} \quad
 
 \vspace{10mm}
 
-\href{https://github.com/nhejazi}{\tt github/nhejazi}
+\href{https://twitter.com/nshejazi}{\tt twitter/@nshejazi}
 
 \vspace{10mm}
 
-\href{https://twitter.com/nshejazi}{\tt twitter/@nshejazi}
+\href{https://github.com/nhejazi}{\tt github/nhejazi}
 
 
 \note{Here's where you can find me, as well as the slides for this talk.}
