@@ -66,9 +66,9 @@
 
   \note{These are slides for a talk given most recently at the Division of
     Biostatistics seminar series, at the University of California, Berkeley on
-    13 March 2017.
+    20 March 2017.
 
-    Source: {\tt https://github.com/nhejazi/talk-biotmle} \\
+    Source: {\tt https://github.com/nhejazi/talk\_biotmle} \\
     Slides: {\tt https://goo.gl/r3zsu6} \\
     With notes: {\tt https://goo.gl/6ou8YR}
 }
@@ -95,7 +95,7 @@
 
 
 \note{We'll go over this summary again at the end of the talk. Hopefully, it
-  will all make more sense then.
+      will all make more sense then.
 }
 \end{frame}
 
@@ -146,11 +146,11 @@
 
 
 \note{There's nothing particularly wrong with this approach. It's exactly what
-  we would come up with after a first-year statistics course. In practice, there
-  are many issues: (1) we are forced to specify a functional form, the linear
-  model; (2) we end up with unstable variance estimates that sharply increase
-  the number of false positives detected, even after multiple testing
-  corrections.
+      we would come up with after a first-year statistics course. In practice,
+      there are many issues: (1) we are forced to specify a functional form, the
+      linear model; (2) we end up with unstable variance estimates that sharply
+      increase the number of false positives detected, even after multiple
+      testing corrections.
 }
 \end{frame}
 
@@ -177,7 +177,11 @@
 \end{itemize}
 \end{center}
 
-\note{...}
+\note{The substantive contribution here is the use of an empirical Bayes method
+      to shrink the standard deviation across all of the biomarkers such that we
+      obtain a larger (but accurate) estimate that reduces the number of test
+      statistics that are marked as significant by low $s^2_b$ estimates alone.
+}
 \end{frame}
 
 
@@ -192,13 +196,19 @@
   \item Such models are a matter of convenience and not honest scientific
     practice: does $\hat{\beta}_{b}$ really answer our questions?
   \item We can do better by using parameters motivated by causal models (n.b.,
-    these reduce to ``variable importance measures'' in our case).
+    these will reduce to ``variable importance measures'' in our case).
   \item As long as the parameters we seek to estimate have asymptotically linear
     estimators, we can readily apply the approach of moderated statistics.
 \end{itemize}
 \end{center}
 
-\note{...}
+\note{Linear models are convenient for communicating results --- that is, all
+      scientists are trained to understand them. This means they provide a basic
+      way of easily communicating between statisticians and collaborators. That
+      said, doesn't it seem a bit odd to use such elementary models to analyze
+      complex biological sequencing data? We're using old statistical technology
+      to analyze classes of data that have only recently become available.
+}
 \end{frame}
 
 
@@ -227,7 +237,12 @@
 \end{itemize}
 \end{center}
 
-\note{...}
+\note{By allowing scientific questions to inform the parameters that we choose
+      to estimate, we can do a better job of actually answering the questions of
+      interest to our collaborators. Further, we abandon the need to specify the
+      functional relationship between our outcome and covariates; moreover, we
+      can now make use of advances in machine learning.
+}
 \end{frame}
 
 
@@ -253,11 +268,11 @@
 \end{itemize}
 \end{center}
 
-  \note{Natural use of machine learning methods for the estimation of both $Q_0$
-    and $g_0$. Focuses effort to achieve minimal bias and asymptotic semi-parametric
-    efficiency bound for the variance, but still get inference (with some
-    assumptions).
-  }
+\note{Natural use of machine learning methods for the estimation of both $Q_0$
+      and $g_0$. Focuses effort to achieve minimal bias and asymptotic
+      semiparametric efficiency bound for the variance, but still get inference
+      (with some assumptions).
+}
 \end{frame}
 
 
@@ -289,7 +304,9 @@
 \end{itemize}
 \end{center}
 
-\note{...}
+\note{Using the influence curve representation, we can obtain all of the
+  standard objects of statistical interest, but for more interesting parameters.
+}
 \end{frame}
 
 
@@ -317,10 +334,12 @@
 
 \note{
   \begin{itemize}
-    \item Consider this is repeated for $j=1,\ldots,J$  different biomarkers, so that one has, for each $j$:
-      $$\Psi_j(Q_{j,n}^{*}),S_j^2(IC_{j,n})$$
-      or estimate of variable importance and standard error for all $J$.
-    \item Propose an existing joint-inferential procedure that can add some finite-sample robustness to an estimator that can be highly variable.
+    \item Consider this is repeated for $b = 1, \ldots, B$  different
+      biomarkers, so that one has, for each $b$:
+      $$\Psi_b(Q_{b,n}^{*}), S_b^2(IC_{b,n}),$$
+      estimate of variable importance and standard error for all $B$.
+    \item Propose an existing joint-inferential procedure that can add some
+      finite-sample robustness to an estimator that can be highly variable.
    \end{itemize}
 }
 \end{frame}
@@ -367,7 +386,13 @@
 \end{itemize}
 \end{center}
 
-\note{...}
+\note{Essentially, we have the same concerns about using variable importance
+  measures that we did about using the standard t-test --- that is, non-robut
+  estimates of the standard error of the estimator of the target parameter can
+  cause erroneous identification of biomarkers (false positives). To reduce
+  this, we can apply the same machinery that we did in the case of the standard
+  t-test for our naive linear modeling approach.
+}
 \end{frame}
 
 
@@ -386,7 +411,8 @@
 \end{itemize}
 \end{center}
 
-\note{Use it, abuse it. File an issue. Help make it better!}
+\note{Use it. File an issue. Help make it better!
+}
 \end{frame}
 
 
@@ -400,17 +426,19 @@
     with data collected on $125$ subjects and roughly $22,000$ biomarkers.
   \item Baseline covariates $W$: age, sex, smoking status; all were discretized.
   \item Treatment $A$ is degree of Benzene exposure: none, $<1$ppm, and $>5$ppm.
-  \item Outcome $Y$ is miRNA expression measures, normalized by median.
+  \item Outcome $Y$ is miRNA expression, median normalized.
   \item Estimate the parameter:
     \[
       \Psi_b(P_n^*) = \mathbb{E}[\mathbb{E}[Y_b \mid A = \text{max}(A), W] -
       \mathbb{E}[Y_b \mid A = \text{min}(A), W]]
     \]
-  \item Apply the moderated t-statistic as previously discussed.
+  \item Apply moderated t-test as previously discussed.
 \end{itemize}
 \end{center}
 
-\note{...}
+\note{We are really just walking through the mechanistic procedure we outline,
+      applying to the data set that served as our motivating example.
+}
 \end{frame}
 
 
@@ -422,8 +450,9 @@
 \end{center}
 
 \note{This is promising --- we're not seeing too many biomarkers identified as
-  ``significant.'' But, we do have to correct for those $22,000$ tests that we
-  just performed.}
+      ``significant.'' But, we do have to correct for those $22,000$ tests that
+      we just performed.
+}
 \end{frame}
 
 
@@ -435,7 +464,8 @@
 \end{center}
 
 \note{After application of the Benjamini-Hochberg procedure for controlling the
-  False Discovery Rate (FDR)}
+      False Discovery Rate (FDR).
+}
 \end{frame}
 
 
@@ -447,8 +477,9 @@
 \end{center}
 
 \note{We can use our influence curve transform to identify biomarkers that are
-  top contributers to the target parameter of interest --- the ATE in this
-  case.}
+      top contributers to the target parameter of interest --- the ATE in this
+      case.
+}
 \end{frame}
 
 
