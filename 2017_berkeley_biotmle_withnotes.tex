@@ -20,7 +20,7 @@
 \usepackage{bbm}
 
 %Bibliography
-\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage[super]{natbib}
 \bibpunct{(}{)}{,}{a}{}{;}
 \usepackage{bibentry}
 \nobibliography*
@@ -238,8 +238,8 @@
     loss-based estimation} (TMLE).
   \item \textbf{Asymptotic linearity:}
     \[
-      \sqrt{n}(\Psi_b(P_n^*) - \Psi_b(P_0)) = \frac{1}{\sqrt{n}}
-      \sum_{i = 1}^{n} IC(O_i) + o_P(1)
+      \Psi_b(P_n^*) - \Psi_b(P_0) = \frac{1}{n} \sum_{i = 1}^{n} IC(O_i) +
+      o_P(\frac{1}{\sqrt{n}})
     \]
 \end{itemize}
 \end{center}
@@ -298,7 +298,7 @@
     \bar{Q}^{(b,1)}_n(a_{h}, W_i) - \bar{Q}^{(b,1)}_n(a_{l}, W_i) -
     \Psi_{b}(P_n^*)
   \end{dmath}
-  \item Sample variance of the estimated influence curve:
+  \item Sample variance of the influence curve:
     \[
       \textstyle s^2(IC_n) = \frac{1}{n}\sum_{i=1}^n\left(IC_n(O_i) \right)^2
     \]
@@ -307,7 +307,7 @@
       se_n = \sqrt{\frac{s^2(IC_n)}{n}}
     \]
   \item Use this for inference --- that is, to derive uncertainty measures
-    (p-values, confidence intervals).
+    (i.e., p-values, confidence intervals).
 \end{itemize}
 \end{center}
 
@@ -526,10 +526,10 @@
 
 
 
-\begin{frame}[allowframebreaks]{References}
+\begin{frame}[c,allowframebreaks]{References}
 \bibliographystyle{apalike}
 \nocite{*}
-\bibliography{references}{}
+\bibliography{references}
 
 \end{frame}
 
