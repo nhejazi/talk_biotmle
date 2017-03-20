@@ -1,10 +1,22 @@
 \documentclass[12pt,t,handout]{beamer}
 \usepackage{graphicx}
+\beamerdefaultoverlayspecification{<+->}
 \setbeameroption{show notes}
 \setbeamertemplate{note page}[plain]
 \usepackage{listings}
 \usepackage{datetime}
 \usepackage{url}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{mathptmx}
+\usepackage{dsfont}
+\usepackage{psfrag}
+\usepackage{epsfig}
+\usepackage{float}
+\usepackage{breqn}
+\usepackage{bbm}
 
 %Bibliography
 \usepackage{natbib}
@@ -66,113 +78,81 @@
 
 
 
-\begin{frame}[c]{Preview: Summary}
+\begin{frame}[c]{Preview}
 \only<1>{\addtocounter{framenumber}{-1}}
-
 \begin{center}
-\begin{itemize}
+\begin{enumerate}
   \itemsep12pt
-  \item TMLE provides a robust framework for the analysis of miRNA data,
-    comparing favorably against LIMMA.
-  \item The data-adaptive multiple testing approach developed can successfully
-    be applied to screening (based on variable importance measures).
-  \item A TMLE-based technique for estimation/inference of DNA methylation
-    (in particular, 450K data) has been formulated, and an R package is in
-    development.
-  \item Combining data-adaptive multiple testing with the above TMLE method
-    promises to provide a robust framework for analyzing DNA methylation data.
-\end{itemize}
+  \item Linear models are the standard approach for analyzing microarray and
+    next-generation sequencing data (e.g., R package ``limma'').
+  \item Moderated statistics help reduce false positives by using an empirical
+    Bayes method to perform standard deviation shrinkage for test statistics.
+  \item \textit{Beyond linear models:} we can assess evidence using parameters
+    that are more scientifically interesting (e.g., ATE) by way of TMLE.
+  \item The approach of moderated statistics easily extends to the case of
+    asymptotically linear parameters.
+\end{enumerate}
 \end{center}
 
 
 \note{We'll go over this summary again at the end of the talk. Hopefully, it
   will all make more sense then.
 }
-
 \end{frame}
 
 
 
-\begin{frame}[c]{Targeted Minimum Loss-Based Estimation (TMLE)}
-
+\begin{frame}[c]{Motivation: Let's meet the data}
 \begin{center}
 \begin{itemize}
-  \item TMLE produces a well-defined, unbiased, efficient substitution estimator
-    of target parameters of a data-generating distribution.
-  \item It is generally an iterative procedure (though there is now a general
-    one-step) that updates an initial (super learner) estimate  of the relevant
-    part $Q_0$ of the data generating distribution $P_0$, possibly using an
-    estimate of a nuisance parameter $g_0$.
-  \item Like corresponding A-IPTW estimators, removes asymptotic residual bias
-    of initial estimator for the target parameter, if it uses a consistent
-    estimator of $g_0$, thus {\em Doubly Robust}.
-  \item If initial estimator was consistent for the target parameter, the
-    additional fitting of the data in the targeting step may remove finite
-    sample bias, and  preserves consistency property of the initial estimator.
+  \itemsep12pt
+  \item Observational study of the impact of occupational exposure (to benzene),
+    with data collected on $125$ subjects and roughly $22,000$ biomarkers.
+  \item Biomarkers of interest are in the form of \textbf{miRNA}, assessed
+    using the \textit{Illumina Human Ref-8 BeadChips} platform.
+  \item Occupational exposure to benzene reported as discrete values of
+    interest (to epidemiologists): none, $<1$ppm, $>5$ppm.
+  \item Background (phenotype-level) information available on each subject,
+    including age, sex, smoking status.
 \end{itemize}
 \end{center}
 
-\note{...}
 
-\end{frame}
-
-
-
-\begin{frame}[c]{TMLE via Machine Learning}
-
-\begin{center}
-\begin{itemize}
-  \item Natural use of machine learning methods for the estimation of both $Q_0$
-    and $g_0$.
-  \item Focuses effort to achieve minimal bias and asymptotic semi-parametric
-    efficiency bound for the variance, but still get inference (with some
-    assumptions).
-\end{itemize}
-\end{center}
-
-\note{...}
-
-\end{frame}
-
-
-
-\begin{frame}[c]{Inference (Standard errors) via Influence Curve (IC)}
-
-\begin{center}
-\begin{itemize}
-\item influence curve\index{influence curve} for estimator is:
-\begin{multline*}
-IC_n(O_i)=\left (\frac{I(A_i=a_h)}{g_n(a_h\mid W_i)}-\frac{I(A_i=a_l)}{g_n(a_l\mid W_i)}\right)(Y-\bar{Q}^1_n(A_i,W_i))\\
-+\bar{Q}^1_n(a_h,W_i)-\bar{Q}^1_n(a_l,W_i)-\psi_{TMLE,n},
-\end{multline*}
-\item Sample variance of the estimated influence curve:
-\[\textstyle S^2(IC_n)=\frac{1}{n}\sum_{i=1}^n\left(IC_n(o_i)\right)^2.\]
-\item Use sample variance to estimate the standard error of our estimator:
-\[SE_n=\sqrt{\frac{S^2(IC_n)}{n}}.\]
-\item Use this to derive uncertainty measures (p-values, confidence intervals, etc.).
-\end{itemize}
-\end{center}
-
-\note{...}
-
-\end{frame}
-
-
-
-\begin{frame}[c]{Repeating Estimates of Variable Importance one biomarker at a
-  time}
-
-\Large{
-\begin{itemize}
-\item Consider this is repeated for $j=1,\ldots,J$  different biomarkers, so that one has, for each $j$: 
-$$\Psi_j(Q_{j,n}^{*}),S_j^2(IC_{j,n})$$
-or estimate of variable importance and standard error for all $J$.
-\item Propose an existing joint-inferential procedure that can add some finite-sample robustness to an estimator that can be highly variable.
-\end{itemize}
+\note{This is not an atypical data set by modern standards in epidemiology,
+      certainly not the standard for molecular biology. That is, sample sizes
+      are usually much smaller in experiments examining biological processes.
 }
+\end{frame}
 
-\note{...}
 
+
+\begin{frame}[c]{Data analysis? Linear models!}
+\begin{center}
+\begin{itemize}
+  \itemsep12pt
+  \item For each biomarker ($b = 1, \dots, B$), fit a linear model:
+    \[
+    \mathbb{E}[y_b] = X \beta_b
+    \]
+  \item Generally, we have a particular model coefficent in which we are
+    interested (e.g., effect of benzene on biomarker expression).
+  \item Controlling for baseline covariates, batch effects, and potential
+    confounders happens by adding terms to the linear model.
+  \item Test the coefficent of interest using a standard t-test:
+    \[
+      t_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{s^2_b}
+    \]
+\end{itemize}
+\end{center}
+
+
+\note{There's nothing particularly wrong with this approach. It's exactly what
+  we would come up with after a first-year statistics course. In practice, there
+  are many issues: (1) we are forced to specify a functional form, the linear
+  model; (2) we end up with unstable variance estimates that sharply increase
+  the number of false positives detected, even after multiple testing
+  corrections.
+}
 \end{frame}
 
 
@@ -181,150 +161,326 @@ or estimate of variable importance and standard error for all $J$.
 
 \begin{center}
 \begin{itemize}
-\item Thus, one can define a standard t-test statistic for a general (asymptotically linear) parameter estimate (over $g=1,\ldots,G$) as:
-\[
-t_g = \frac{\sqrt{n}(\Psi_g(P_n)-\psi_0)}{S_g(IC_{g,n})}
-\]
-\item Consider the moderated t-statistic proposed by \cite{Smyth:2005qy}:
-\[
-\tilde{t}_g = \frac{\sqrt{n}(\Psi_g(P_n)-\psi_0)}{\tilde{S}_g^2}
-\]
-where the posterior estimate of the variance of the influence curve is  
-\[
-\tilde{S}^2_g = \frac{d_0 S^2_0 +d_g S^2_g(IC_{g,n})}{d_0+d_g}
-\]
+  \itemsep12pt
+  \item When the sample size is small, $s^2_b$ may be so small that small
+    differences ($\hat{\beta}_{b} - \beta_{b, H_0}$) lead to large $t_{b}$.
+  \item Uncertainty in the variance is an acute problem when the sample size is
+    small.
+  \item This results in false positives. Smyth proposes we get around this by an
+    empirical Bayes shrinkage of the $s^2_b$.
+  \item Test the coefficent of interest with a \textbf{moderated} t-test:
+    \[
+      \tilde{t}_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{\tilde{s}^2_b},
+      \,
+      \tilde{s}^2_b = \frac{s^2_bd_b + s^2_0d_0}{d_b + d_0}
+    \]
+  \item Eliminates large t-statistics merely from very small $s_b$.
 \end{itemize}
 \end{center}
 
 \note{...}
-
 \end{frame}
 
 
 
-\begin{frame}[c]{Implement for Any Asymptotically Linear Parameter}
-
-\begin{center}
-\begin{itemize}
-\item Treat like one-sample problem estimate of parameter with associated SE from IC.
-\item Just need to get estimate for each $g$ as well as the plug-in IC for every observation for that $g$ and repeat for all $g$.
-\item Transform data original $G x n$ matrix where new entries are:
-\[
-Y^*_{g,i} = IC_{g,n}(O_i; P_n)+\Psi_g(P_n)
-\]
-\item Since the average of the $IC_{g,n}$ across the columns (units) for a single $g$ will be 0, the average of this transform will be the original estimate $\Psi_g(P_n)$.
-\item For simplicity assume the null value is $\psi_0 = 0$ for all $g$.  Then, running {\em limma} package on this transform,$Y^*_{g,i}$,  will generate multiple testing corrections based on presented above for $\tilde{t}_g$.
-\end{itemize}
-\end{center}
-
-\note{...}
-
-\end{frame}
-
-
-
-\begin{frame}[c]{Why LIMMA approach in this context?}
-
-\begin{center}
-\begin{itemize}
-\item Often times these analyses based on relatively small samples.
-\item want data-adaptive estimate but at least with standard implementation of these estimates (estimation equation, substitution,...), the SE's can be non-robust.
-\item practically, one can get "significant" estimates of variable importance measures that are driven by poorly and underestimated $S^2_g(IC_{g,n})$. 
-\item LIMMA shrinks these $S^2_g(IC_{g,n})$ by making them bigger and thus takes biomarkers with small parameter estimates but very small $S^2_g(IC_{g,n})$ out of statistical significance.
-\item Also, just seems to work very well...
-\end{itemize}
-\end{center}
-
-\note{...}
-
-\end{frame}
-
-
-
-\begin{frame}[c]{Data Analysis I}
+\begin{frame}[c]{Beyond linear models}
 
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item $\dots$
-  \item $\dots$
-  \item $\dots$
-  \item $\dots$
+  \item It's not always desirable to specify a functional form: perhaps we can
+    do better than linear models?
+  \item Such models are a matter of convenience and not honest scientific
+    practice: does $\hat{\beta}_{b}$ really answer our questions?
+  \item We can do better by using parameters motivated by causal models (n.b.,
+    these reduce to ``variable importance measures'' in our case).
+  \item As long as the parameters we seek to estimate have asymptotically linear
+    estimators, we can readily apply the approach of moderated statistics.
 \end{itemize}
 \end{center}
 
 \note{...}
-
 \end{frame}
 
 
 
-\begin{frame}[c]{Data Analysis II}
+\begin{frame}[c]{Target parameters for complex questions}
 
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item $\dots$
-  \item $\dots$
-  \item $\dots$
-  \item $\dots$
+  \item Rather than being satisfied with $\hat{\beta}_{b}$ as an answer to our
+    questions, let's consider a simple target parameter: the average treatment
+    effect (ATE):
+    \[
+      \Psi_b(P_0) = \mathbb{E}_{W,0}[\mathbb{E}_0[Y_b \mid A = a_{high}, W] -
+      \mathbb{E}_0[Y_b \mid A = a_{low}, W]]
+    \]
+  \item No need to specify a functional form or assume that we know the true
+    data-generating distribution $P_0$.
+  \item Parameters like this can be estimated using \textit{targeted minimum
+    loss-based estimation} (TMLE).
+  \item \textbf{Asymptotic linearity:}
+    \[
+      \sqrt{n}(\Psi_b(P_n^*) - \Psi_b(P_0)) = \frac{1}{\sqrt{n}}
+      \sum_{i = 1}^{n} IC(O_i) + o_P(1)
+    \]
 \end{itemize}
 \end{center}
 
 \note{...}
-
 \end{frame}
 
 
 
-\begin{frame}[c]{Data Analysis III}
+\begin{frame}[c]{Targeted Minimum Loss-Based Estimation}
 
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item $\dots$
-  \item $\dots$
-  \item $\dots$
-  \item $\dots$
+  \item TMLE produces a well-defined, unbiased, efficient substitution estimator
+    of target parameters of a data-generating distribution.
+  \item Iterative procedure (though there is a one-step now) that updates an
+    initial estimate of the relevant part ($Q_0$) of the data generating
+    distribution ($P_0$).
+  \item Like corresponding A-IPTW estimators, removes asymptotic residual bias
+    of initial estimator for the target parameter. If it uses a consistent
+    estimator of $g_0$ (nuisance parameter), it is \textit{doubly robust}.
+  \item We can estimate the target parameter:
+    \[
+      \Psi_b(P_n^*) = \frac{1}{n}\sum_{i=1}^{n}[Q_n^{(b,1)}(A_i = a_h, W_i) -
+      Q_n^{(b,1)}(A_i = a_l, W_i)]
+    \]
+\end{itemize}
+\end{center}
+
+  \note{Natural use of machine learning methods for the estimation of both $Q_0$
+    and $g_0$. Focuses effort to achieve minimal bias and asymptotic semi-parametric
+    efficiency bound for the variance, but still get inference (with some
+    assumptions).
+  }
+\end{frame}
+
+
+
+
+\begin{frame}[c]{Inference with influence curves}
+
+\begin{center}
+\begin{itemize}
+  \itemsep12pt
+  \item The influence curve for the estimator is:
+  \begin{dmath}
+    IC_{b,n}(O_i) = \left (\frac{\mathbbm{1}(A_i = a_{h})}{g_n(a_{h} \mid W_i)}
+    - \frac{\mathbbm{1}(A_i = a_{l})}{g_n (a_{l} \mid W_i)} \right) \cdot
+    (Y_{b,i} - \bar{Q}^{(b,1)}_n(A_i, W_i)) +
+    \bar{Q}^{(b,1)}_n(a_{h}, W_i) - \bar{Q}^{(b,1)}_n(a_{l}, W_i) -
+    \Psi_{b}(P_n^*)
+  \end{dmath}
+  \item Sample variance of the estimated influence curve:
+    \[
+      \textstyle s^2(IC_n) = \frac{1}{n}\sum_{i=1}^n\left(IC_n(O_i) \right)^2
+    \]
+  \item Use sample variance to estimate the standard error:
+    \[
+      se_n = \sqrt{\frac{s^2(IC_n)}{n}}
+    \]
+  \item Use this for inference --- that is, to derive uncertainty measures
+    (p-values, confidence intervals).
 \end{itemize}
 \end{center}
 
 \note{...}
-
 \end{frame}
 
 
 
-\begin{frame}[c]{Review: Summary}
+\begin{frame}[c]{Moderated statistics for target parameters}
 
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item TMLE provides a robust framework for the analysis of miRNA data,
-    comparing favorably against LIMMA.
-  \item The data-adaptive multiple testing approach developed can successfully
-    be applied to screening (based on variable importance measures).
-  \item A TMLE-based technique for estimation/inference of DNA methylation
-    (in particular, 450K data) has been formulated, and an R package is in
-    development.
-  \item Combining data-adaptive multiple testing with the above TMLE method
-    promises to provide a robust framework for analyzing DNA methylation data.
+  \item One can define a standard t-test statistic for an estimator of an
+    asymptotically linear parameter (over $b = 1, \dots, B$) as:
+    \[
+      t_b = \frac{\sqrt{n}(\Psi_b(P_n^*) - \Psi_0)}{s_b(IC_{b,n})}
+    \]
+  \item This naturally extends to the moderated t-statistic of Smyth:
+    \[
+      \tilde{t}_b = \frac{\sqrt{n}(\Psi_b(P_n^*) - \Psi_0)}{\tilde{s}_b^2}
+    \]
+    where the posterior estimate of the variance of the influence curve is
+    \[
+      \tilde{s}^2_b = \frac{s^2_b(IC_{b,n})d_b + s^2_0d_0}{d_b + d_0}
+    \]
 \end{itemize}
 \end{center}
+
+\note{
+  \begin{itemize}
+    \item Consider this is repeated for $j=1,\ldots,J$  different biomarkers, so that one has, for each $j$:
+      $$\Psi_j(Q_{j,n}^{*}),S_j^2(IC_{j,n})$$
+      or estimate of variable importance and standard error for all $J$.
+    \item Propose an existing joint-inferential procedure that can add some finite-sample robustness to an estimator that can be highly variable.
+   \end{itemize}
+}
+\end{frame}
+
+
+
+\begin{frame}[c]{An influence curve transform}
+
+\begin{center}
+\begin{itemize}
+  \itemsep12pt
+  \item Need the estimate for each biomarker ($b$) and the IC for every
+    observation for that biomarker, repeating for all $b = 1, \dots, B$.
+  \item Essentially, transform original data matrix such that new entries are:
+    \[
+      Y^*_{b,i} = IC_{b,n}(O_i; P_n) + \Psi_b(P_n^*)
+     \]
+ \item Since $\mathbb{E}[IC_{b,n}] = 0$ across the columns (units) for each $b$,
+   the average will be the original estimate $\Psi_b(P_n^*)$.
+  \item For simplicity, let's assume the null value is $\Psi_0 = 0$ for all $b$.
+    Then, applying the moderated t-test to $Y^*_{b,i}$ will generate corrected,
+    conservative test statistics $\tilde{t}_b$.
+\end{itemize}
+\end{center}
+
+\note{Just like the one-sample problem for estimation of parameter with
+    associated standard error from the influence curve.}
+\end{frame}
+
+
+
+\begin{frame}[c]{Why moderated statistics in this context?}
+
+\begin{center}
+\begin{itemize}
+  \item Often times, such data analyses are based on relatively small samples.
+  \item To get a data-adaptive estimate, with standard implementation of these
+    estimates, standard errors can be non-robust.
+\item Practically, ``significant'' estimates of variable importance measures may
+  be driven by poorly and underestimated $s^2_b(IC_{b,n})$.
+\item Moderated statistics shrink these $s^2_b(IC_{b,n})$ (making them bigger),
+  thus taking biomarkers with small parameter estimates but very small
+  $s^2_b(IC_{b,n})$ out of statistical significance.
+\end{itemize}
+\end{center}
+
+\note{...}
+\end{frame}
+
+
+
+\begin{frame}[c]{Software implementation: ``R/biotmle''}
+
+\begin{center}
+\begin{itemize}
+  \itemsep12pt
+  \item An R package that ``facilitates biomarker discovery by generalizing the
+    moderated t-statistic of Smyth for use with asymptotically linear
+    parameters.''
+  \item Check it out on GitHub: \href{https://github.com/nhejazi/biotmle}
+    {nhejazi/biotmle} \\[1em]
+    \includegraphics<2->[width=.92\textwidth]{Figs/biotmle.png}
+\end{itemize}
+\end{center}
+
+\note{Use it, abuse it. File an issue. Help make it better!}
+\end{frame}
+
+
+
+\begin{frame}[c]{Data analysis with ``R/biotmle''}
+
+\begin{center}
+\begin{itemize}
+  \itemsep12pt
+  \item Observational study of the impact of occupational exposure (to benzene),
+    with data collected on $125$ subjects and roughly $22,000$ biomarkers.
+  \item Baseline covariates $W$: age, sex, smoking status; all were discretized.
+  \item Treatment $A$ is degree of Benzene exposure: none, $<1$ppm, and $>5$ppm.
+  \item Outcome $Y$ is miRNA expression measures, normalized by median.
+  \item Estimate the parameter:
+    \[
+      \Psi_b(P_n^*) = \mathbb{E}[\mathbb{E}[Y_b \mid A = \text{max}(A), W] -
+      \mathbb{E}[Y_b \mid A = \text{min}(A), W]]
+    \]
+  \item Apply the moderated t-statistic as previously discussed.
+\end{itemize}
+\end{center}
+
+\note{...}
+\end{frame}
+
+
+
+\begin{frame}[c]{Analysis results I: Uncorrected tests}
+
+\begin{center}
+  \includegraphics[scale=0.47]{Figs/limma_rawp.pdf}
+\end{center}
+
+\note{This is promising --- we're not seeing too many biomarkers identified as
+  ``significant.'' But, we do have to correct for those $22,000$ tests that we
+  just performed.}
+\end{frame}
+
+
+
+\begin{frame}[c]{Analysis results II: Corrected tests}
+
+\begin{center}
+  \includegraphics[scale=0.47]{Figs/limma_adjp.pdf}
+\end{center}
+
+\note{After application of the Benjamini-Hochberg procedure for controlling the
+  False Discovery Rate (FDR)}
+\end{frame}
+
+
+
+\begin{frame}[c]{Analysis results III: Heatmap of IC estimates}
+
+\begin{center}
+  \includegraphics[scale=0.45]{Figs/superheatmap.png}
+\end{center}
+
+\note{We can use our influence curve transform to identify biomarkers that are
+  top contributers to the target parameter of interest --- the ATE in this
+  case.}
+\end{frame}
+
+
+
+\begin{frame}[c]{Review}
+\begin{center}
+\begin{enumerate}
+  \itemsep12pt
+  \item Linear models are the standard approach for analyzing microarray and
+    next-generation sequencing data (e.g., R package ``limma'').
+  \item Moderated statistics help reduce false positives by using an empirical
+    Bayes method to perform standard deviation shrinkage for test statistics.
+  \item \textit{Beyond linear models:} we can assess evidence using parameters
+    that are more scientifically interesting (e.g., ATE) by way of TMLE.
+  \item The approach of moderated statistics easily extends to the case of
+    asymptotically linear parameters.
+\end{enumerate}
+\end{center}
+
 
 \note{It's always good to include a summary.}
-
 \end{frame}
+
 
 
 \begin{frame}{Acknowledgments}
-
 \vspace{18pt}
-
 \begin{tabular}{@{}l@{\hspace{1.5cm}}l@{}}
-Alan Hubbard & \footnotesize \lolit University of CA, Berkeley \\
+Alan Hubbard & \footnotesize \lolit University of California, Berkeley \\
 \\[0.5ex]
-Mark van der Laan & \footnotesize \lolit University of CA, Berkeley \\
+Mark van der Laan & \footnotesize \lolit University of California, Berkeley \\
 
 %\\[2ex]
 
@@ -336,8 +492,7 @@ Mark van der Laan & \footnotesize \lolit University of CA, Berkeley \\
 
 %NIH - funding source ?
 
-\note{}
-
+\note{This was all made possible by generous advising and collaboration.}
 \end{frame}
 
 
@@ -366,7 +521,6 @@ Slides: \href{https://goo.gl/6ou8YR}{goo.gl/6ou8YR} \quad
 
 
 \note{Here's where you can find me, as well as the slides for this talk.}
-
 \end{frame}
 
 
