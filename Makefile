@@ -4,14 +4,18 @@ TITLE = 2017_berkeley_biotmle
 all: $(TITLE).pdf notes clean
 
 $(TITLE).pdf: $(TITLE).tex header.tex
-	xelatex $<
+	xelatex $(TITLE)
+	bibtex $(TITLE)
+	xelatex $(TITLE)
 
 notes: $(TITLE)_withnotes.pdf
 
 clean:
-	rm -f *.{aux,log,nav,out,snm,toc,vrb}
+	rm -f *.{aux,log,nav,out,snm,toc,vrb,bbl,blg}
 
 $(TITLE)_withnotes.pdf: $(TITLE)_withnotes.tex header.tex
+	xelatex $(TITLE)_withnotes
+	bibtex $(TITLE)_withnotes
 	xelatex $(TITLE)_withnotes
 	pdfnup $(TITLE)_withnotes.pdf \
 		--nup 1x2 --no-landscape --paper letterpaper --frame true --scale 0.9

@@ -5,6 +5,7 @@
 \setbeamertemplate{note page}[plain]
 \usepackage{listings}
 \usepackage{datetime}
+\usepackage{hyperref}
 \usepackage{url}
 
 \usepackage{amsmath}
@@ -19,7 +20,7 @@
 \usepackage{bbm}
 
 %Bibliography
-\usepackage{natbib}
+\usepackage[square,sort,comma,numbers]{natbib}
 \bibpunct{(}{)}{,}{a}{}{;}
 \usepackage{bibentry}
 \nobibliography*
@@ -139,7 +140,7 @@
     confounders happens by adding terms to the linear model.
   \item Test the coefficent of interest using a standard t-test:
     \[
-      t_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{s^2_b}
+      t_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{s_b}
     \]
 \end{itemize}
 \end{center}
@@ -169,8 +170,8 @@
     empirical Bayes shrinkage of the $s^2_b$.
   \item Test the coefficent of interest with a \textbf{moderated} t-test:
     \[
-      \tilde{t}_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{\tilde{s}^2_b},
-      \,
+      \tilde{t}_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{\tilde{s}_b},
+      \;
       \tilde{s}^2_b = \frac{s^2_bd_b + s^2_0d_0}{d_b + d_0}
     \]
   \item Eliminates large t-statistics merely from very small $s_b$.
@@ -181,6 +182,11 @@
       to shrink the standard deviation across all of the biomarkers such that we
       obtain a larger (but accurate) estimate that reduces the number of test
       statistics that are marked as significant by low $s^2_b$ estimates alone.
+
+      Note that this is \textbf{not} the exact formulation of the moderated
+      t-statistic as given by Smyth (his derivation assumes a hierarchical
+      model; see original paper if interested). This formulation does a good
+      enough job to help us see the bigger picture.
 }
 \end{frame}
 
@@ -323,7 +329,7 @@
     \]
   \item This naturally extends to the moderated t-statistic of Smyth:
     \[
-      \tilde{t}_b = \frac{\sqrt{n}(\Psi_b(P_n^*) - \Psi_0)}{\tilde{s}_b^2}
+      \tilde{t}_b = \frac{\sqrt{n}(\Psi_b(P_n^*) - \Psi_0)}{\tilde{s}_b}
     \]
     where the posterior estimate of the variance of the influence curve is
     \[
@@ -470,7 +476,21 @@
 
 
 
-\begin{frame}[c]{Analysis results III: Heatmap of IC estimates}
+\begin{frame}[c]{Analysis results III: Volcano plot}
+
+\begin{center}
+  \includegraphics[scale=0.6]{Figs/volcano.png}
+\end{center}
+
+\note{Taking a look at a standard volcano plot adapted to the ATE quickly
+      reveals that we really are not identifying any biomarkers with low fold
+      change in the ATE as significant erroneously.
+}
+\end{frame}
+
+
+
+\begin{frame}[c]{Analysis results IV: Heatmap of IC estimates}
 
 \begin{center}
   \includegraphics[scale=0.45]{Figs/superheatmap.png}
@@ -505,8 +525,17 @@
 
 
 
-\begin{frame}{Acknowledgments}
-\vspace{18pt}
+\begin{frame}[allowframebreaks]{References}
+\bibliographystyle{apalike}
+\nocite{*}
+\bibliography{references}{}
+
+\end{frame}
+
+
+
+\begin{frame}[c]{Acknowledgments}
+\vspace{10pt}
 \begin{tabular}{@{}l@{\hspace{1.5cm}}l@{}}
 Alan Hubbard & \footnotesize \lolit University of California, Berkeley \\
 \\[0.5ex]
