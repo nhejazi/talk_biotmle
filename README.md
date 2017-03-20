@@ -1,4 +1,4 @@
-# empirical Bayes and asymptotically linear parameters
+# Talk: Empirical Bayes for asymptotically linear parameters
 
 > Materials for a presentation given at a meeting of the Division of
 > Biostatistics seminar series, at the University of California, Berkeley
