@@ -1,85 +1,133 @@
-\documentclass[12pt,t]{beamer}
+\documentclass{beamer}
+\usetheme{metropolis}
+
+% specifications for presenter mode
+%\beamerdefaultoverlayspecification{<+->}
+%\setbeamercovered{transparent}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+
+%\usepackage{coloremoji}
+\usepackage{layout}
+\usepackage{multirow}
+\usepackage{array}
 \usepackage{graphicx}
-\beamerdefaultoverlayspecification{<+->}
+\graphicspath{ {Figs/} }
+
 \setbeameroption{hide notes}
 \setbeamertemplate{note page}[plain]
 \usepackage{listings}
 \usepackage{datetime}
-\usepackage{hyperref}
 \usepackage{url}
+\usepackage{tcolorbox}
+\usepackage{appendixnumberbeamer}
 
+% math shorthand
+\usepackage{bm}
+\usepackage{bbm}
+\usepackage{amstext}
+\usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{mathtools}
 \usepackage{mathptmx}
 \usepackage{dsfont}
 \usepackage{psfrag}
 \usepackage{epsfig}
 \usepackage{float}
 \usepackage{breqn}
-\usepackage{bbm}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\pr}{\mathbb{P}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\lik}{\mathcal{L}}
 
-%Bibliography
-\usepackage[super]{natbib}
+\newtheorem*{assumption*}{\assumptionnumber}
+\providecommand{\assumptionnumber}{}
+\makeatletter
+\newenvironment{assumption}[2]
+ {%
+  \renewcommand{\assumptionnumber}{Assumption #1: $\mathcal{#2}$}%
+  \begin{assumption*}%
+  \protected@edef\@currentlabel{#1: $\mathcal{#2}$}%
+ }
+ {%
+  \end{assumption*}
+ }
+\makeatother
+
+\DeclarePairedDelimiterX{\infdivx}[2]{(}{)}{%
+  #1\;\delimsize\|\;#2%
+}
+\newcommand{\infdiv}{D\infdivx}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% indepndence notation macro
+\newcommand\indep{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
+% Bibliography
+\usepackage{natbib}
 \bibpunct{(}{)}{,}{a}{}{;}
 \usepackage{bibentry}
-\nobibliography*
 
-\input{header.tex}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% end of header
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % title info
-\title{Empirical Bayes Moderation of Asymptotically Linear Parameters}
-\author{\href{http://nimahejazi.org}{Nima Hejazi}}
-\institute{Division of Biostatistics \\
-           University of California, Berkeley \\
-           \href{https://www.stat.berkeley.edu/~nhejazi}
-             {\tt \scriptsize \color{foreground} stat.berkeley.edu/\textasciitilde{}nhejazi}
-          }
-\date{
-  \href{http://nimahejazi.org}
-      {\tt \scriptsize \color{foreground} nimahejazi.org}
-  \\[-4pt]
-  \href{https://twitter.com/nshejazi}
-      {\tt \scriptsize \color{foreground} twitter/@nshejazi}
-  \\[-4pt]
-  \href{https://github.com/nhejazi}
-      {\tt \scriptsize \color{foreground} github/nhejazi}
+\title{\normalsize Variance Moderation of Locally Efficient Estimators in
+  High-Dimensional Biology}
+
+\subtitle{\scriptsize Nonparametric variable importance analysis, multiple
+  testing corrections, supervised clustering, and open source software\\[-10pt]}
+
+\author{\href{https://nimahejazi.org}{Nima Hejazi}\\[-10pt]}
+
+\institute{
+  \begin{figure}[!htb]
+    \centering
+    \begin{minipage}{.65\textwidth}
+        Group in Biostatistics, and \\
+        Center for Computational Biology, \\
+        University of California, Berkeley \\[6pt]
+        \includegraphics[scale=0.12]{twitter-icon.png}
+          \href{https://twitter.com/nshejazi}{nshejazi} \\
+        \includegraphics[scale=0.09]{github-icon.png}
+          \href{https://github.com/nhejazi}{nhejazi} \\
+        \includegraphics[scale=0.12]{homepage.png}
+          \href{https://nimahejazi.org}{nimahejazi.org} \\
+        \includegraphics[scale=0.12]{pdf-icon.png}
+          \href{https://bit.ly/2018\_biostat\_quals}{bit.ly/2018\_biostat\_quals}
+    \end{minipage}%
+    \begin{minipage}{0.35\textwidth}
+      \centering
+      \includegraphics[height=0.80in,width=0.80in]{ucberkeleyseal_874_540.eps}
+    \end{minipage}
+  \end{figure}
 }
 
+\date{\today}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 
-% title slide
-{
-\setbeamertemplate{footline}{} % no page number here
-\frame{
+\begin{frame}[noframenumbering]
+  \thispagestyle{empty}
   \titlepage
+\end{frame}
 
-  \vspace{-2em}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  \centerline{\href{https://goo.gl/6ou8YR}{\tt \scriptsize \underline{slides}: goo.gl/6ou8YR}}
-
-  \vfill \hfill \includegraphics[height=6mm]{Figs/cc-zero.png} \vspace*{-0.75cm}
-
-  \note{These are slides for a talk given most recently at the Division of
-    Biostatistics seminar series, at the University of California, Berkeley on
-    20 March 2017.
-
-    Source: {\tt https://github.com/nhejazi/talk\_biotmle} \\
-    Slides: {\tt https://goo.gl/r3zsu6} \\
-    With notes: {\tt https://goo.gl/6ou8YR}
-}
-}
-}
-
-
-
-\begin{frame}[c]{Preview}
-\only<1>{\addtocounter{framenumber}{-1}}
+\begin{frame}[c,noframenumbering]{Preview}
+\thispagestyle{empty}
 \begin{center}
 \begin{enumerate}
   \itemsep12pt
@@ -94,13 +142,16 @@
 \end{enumerate}
 \end{center}
 
-
 \note{We'll go over this summary again at the end of the talk. Hopefully, it
       will all make more sense then.
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Motivations and Preliminaries}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Motivation: Let's meet the data}
 \begin{center}
@@ -117,14 +168,13 @@
 \end{itemize}
 \end{center}
 
-
 \note{This is not an atypical data set by modern standards in epidemiology,
       certainly not the standard for molecular biology. That is, sample sizes
       are usually much smaller in experiments examining biological processes.
 }
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Data analysis? Linear models!}
 \begin{center}
@@ -145,7 +195,6 @@
 \end{itemize}
 \end{center}
 
-
 \note{There's nothing particularly wrong with this approach. It's exactly what
       we would come up with after a first-year statistics course. In practice,
       there are many issues: (1) we are forced to specify a functional form, the
@@ -155,7 +204,11 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Robustified Variance Estimation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{LIMMA: Linear Models for Microarray Data}
 
@@ -190,7 +243,7 @@
 }
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Beyond linear models}
 
@@ -217,7 +270,11 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{A Role for Targeted Learning}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Target parameters for complex questions}
 
@@ -251,7 +308,7 @@
 }
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Targeted Minimum Loss-Based Estimation}
 
@@ -281,8 +338,11 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Robust Inference and Influence Functions}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Inference with influence curves}
 
@@ -315,7 +375,7 @@
 }
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Moderated statistics for target parameters}
 
@@ -350,7 +410,7 @@
 }
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{An influence curve transform}
 
@@ -375,7 +435,7 @@
     associated standard error from the influence curve.}
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Why moderated statistics in this context?}
 
@@ -401,7 +461,41 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Supervised Distance Matrices and Clustering}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Why moderated statistics in this context?}
+
+\begin{center}
+\begin{itemize}
+  \item Often times, such data analyses are based on relatively small samples.
+  \item To get a data-adaptive estimate, with standard implementation of these
+    estimates, standard errors can be non-robust.
+\item Practically, ``significant'' estimates of variable importance measures may
+  be driven by poorly and underestimated $s^2_b(IC_{b,n})$.
+\item Moderated statistics shrink these $s^2_b(IC_{b,n})$ (making them bigger),
+  thus taking biomarkers with small parameter estimates but very small
+  $s^2_b(IC_{b,n})$ out of statistical significance.
+\end{itemize}
+\end{center}
+
+\note{Essentially, we have the same concerns about using variable importance
+  measures that we did about using the standard t-test --- that is, non-robut
+  estimates of the standard error of the estimator of the target parameter can
+  cause erroneous identification of biomarkers (false positives). To reduce
+  this, we can apply the same machinery that we did in the case of the standard
+  t-test for our naive linear modeling approach.
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Open Source Statistical Software}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Software implementation: ``R/biotmle''}
 
@@ -421,7 +515,7 @@
 }
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Data analysis with ``R/biotmle''}
 
@@ -447,36 +541,9 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\begin{frame}[c]{Analysis results I: Uncorrected tests}
-
-\begin{center}
-  \includegraphics[scale=0.47]{Figs/limma_rawp.pdf}
-\end{center}
-
-\note{This is promising --- we're not seeing too many biomarkers identified as
-      ``significant.'' But, we do have to correct for those $22,000$ tests that
-      we just performed.
-}
-\end{frame}
-
-
-
-\begin{frame}[c]{Analysis results II: Corrected tests}
-
-\begin{center}
-  \includegraphics[scale=0.47]{Figs/limma_adjp.pdf}
-\end{center}
-
-\note{After application of the Benjamini-Hochberg procedure for controlling the
-      False Discovery Rate (FDR).
-}
-\end{frame}
-
-
-
-\begin{frame}[c]{Analysis results III: Volcano plot}
+\begin{frame}[c]{Analysis results I: Volcano plot}
 
 \begin{center}
   \includegraphics[scale=0.6]{Figs/volcano.png}
@@ -488,9 +555,9 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\begin{frame}[c]{Analysis results IV: Heatmap of IC estimates}
+\begin{frame}[c]{Analysis results II: Heatmap of IC estimates}
 
 \begin{center}
   \includegraphics[scale=0.45]{Figs/superheatmap.png}
@@ -502,7 +569,7 @@
 }
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Review}
 \begin{center}
@@ -523,38 +590,35 @@
 \note{It's always good to include a summary.}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{frame}[c,allowframebreaks]{}
 
-\begin{frame}[c,allowframebreaks]{References}
+\small
 \bibliographystyle{apalike}
 \nocite{*}
 \bibliography{references}
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{frame}{Acknowledgments}
 
-\begin{frame}[c]{Acknowledgments}
-\vspace{10pt}
-\begin{tabular}{@{}l@{\hspace{1.5cm}}l@{}}
-Alan Hubbard & \footnotesize \lolit University of California, Berkeley \\
-\\[0.5ex]
-Mark van der Laan & \footnotesize \lolit University of California, Berkeley \\
+\vspace{20pt}
 
-%\\[2ex]
-
-%Collaborator, the first & \footnotesize \lolit University or Institution 2 \\
-%Collaborator, the second & \footnotesize \lolit University or Institution 2 \\
+\underline{Close Collaborators and Advisors:}\\
+\hspace{0.15cm}
+\begin{tabular}{@{}l@{\hspace{0.75cm}}l@{\vspace{0.5em}}}
+  Mark J.~van der Laan & University of California,
+    Berkeley \\
+  Alan E.~Hubbard & University of California,
+    Berkeley
 \end{tabular}
 
-\vspace{10mm}
-
-%NIH - funding source ?
-
-\note{This was all made possible by generous advising and collaboration.}
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{}
 
@@ -582,6 +646,9 @@ Slides: \href{https://goo.gl/6ou8YR}{goo.gl/6ou8YR} \quad
 \note{Here's where you can find me, as well as the slides for this talk.}
 \end{frame}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
