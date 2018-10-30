@@ -1,9 +1,9 @@
 # Talk: Variance moderation of locally efficient estimators
 
-> Materials for a presentation given at the annual retreat of the UC Berkeley
-> [Center for Computational Biology](http://ccb.berkeley.edu/) in November 2018.
+> Materials for a presentation to be proposed for the 2019 annual meeting of the
+> Bioconductor project in NYC.
 
---
+---
 
 ## Abstract
 

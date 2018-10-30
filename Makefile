@@ -1,4 +1,4 @@
-TITLE = 2018_ph298seminar_biotmle
+TITLE = 2019_bioc_biotmle
 
 .PHONY : minimal
 minimal: $(TITLE).pdf clean
