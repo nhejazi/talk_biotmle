@@ -1,181 +1,246 @@
-\documentclass[12pt,t,handout]{beamer}
+\documentclass{beamer}
+\usetheme{metropolis}
+
+% specifications for presenter mode
+%\beamerdefaultoverlayspecification{<+->}
+%\setbeamercovered{transparent}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+
+%\usepackage{coloremoji}
+\usepackage{layout}
+\usepackage{multirow}
+\usepackage{array}
 \usepackage{graphicx}
-\beamerdefaultoverlayspecification{<+->}
+\graphicspath{ {Figs/} }
+
 \setbeameroption{show notes}
 \setbeamertemplate{note page}[plain]
 \usepackage{listings}
 \usepackage{datetime}
-\usepackage{hyperref}
 \usepackage{url}
+\usepackage{tcolorbox}
+\usepackage{appendixnumberbeamer}
 
+% math shorthand
+\usepackage{bm}
+\usepackage{bbm}
+\usepackage{amstext}
+\usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{mathtools}
 \usepackage{mathptmx}
 \usepackage{dsfont}
 \usepackage{psfrag}
 \usepackage{epsfig}
 \usepackage{float}
 \usepackage{breqn}
-\usepackage{bbm}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\pr}{\mathbb{P}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\lik}{\mathcal{L}}
 
-%Bibliography
-\usepackage[super]{natbib}
+\newtheorem*{assumption*}{\assumptionnumber}
+\providecommand{\assumptionnumber}{}
+\makeatletter
+\newenvironment{assumption}[2]
+ {%
+  \renewcommand{\assumptionnumber}{Assumption #1: $\mathcal{#2}$}%
+  \begin{assumption*}%
+  \protected@edef\@currentlabel{#1: $\mathcal{#2}$}%
+ }
+ {%
+  \end{assumption*}
+ }
+\makeatother
+
+\DeclarePairedDelimiterX{\infdivx}[2]{(}{)}{%
+  #1\;\delimsize\|\;#2%
+}
+\newcommand{\infdiv}{D\infdivx}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% indepndence notation macro
+\newcommand\indep{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
+% Bibliography
+\usepackage{natbib}
 \bibpunct{(}{)}{,}{a}{}{;}
 \usepackage{bibentry}
-\nobibliography*
 
-\def\notescolors{1}
-\input{header.tex}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% end of header
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % title info
-\title{Empirical Bayes Moderation of Asymptotically Linear Parameters}
-\author{\href{http://nimahejazi.org}{Nima Hejazi}}
-\institute{Division of Biostatistics \\
-           University of California, Berkeley \\
-           \href{https://www.stat.berkeley.edu/~nhejazi}
-             {\tt \scriptsize \color{foreground} stat.berkeley.edu/\textasciitilde{}nhejazi}
-          }
-\date{
-  \href{http://nimahejazi.org}
-      {\tt \scriptsize \color{foreground} nimahejazi.org}
-  \\[-4pt]
-  \href{https://twitter.com/nshejazi}
-      {\tt \scriptsize \color{foreground} twitter/@nshejazi}
-  \\[-4pt]
-  \href{https://github.com/nhejazi}
-      {\tt \scriptsize \color{foreground} github/nhejazi}
+\title{\normalsize Variance Moderation of Locally Efficient Estimators in
+  High-Dimensional Biology (and the \texttt{biotmle} \texttt{R} package)}
+
+%\subtitle{\scriptsize Nonparametric variable importance, supervised clustering,
+  %\\[-10pt]}
+
+\author{\href{https://nimahejazi.org}{Nima Hejazi}\\[-10pt]}
+
+\institute{
+  \begin{figure}[!htb]
+    \centering
+    \begin{minipage}{.65\textwidth}
+        Graduate Group in Biostatistics, and \\
+        Center for Computational Biology, \\
+        University of California, Berkeley \\[6pt]
+        \includegraphics[scale=0.12]{twitter-icon.png}
+          \href{https://twitter.com/nshejazi}{nshejazi} \\
+        \includegraphics[scale=0.09]{github-icon.png}
+          \href{https://github.com/nhejazi}{nhejazi} \\
+        \includegraphics[scale=0.12]{homepage.png}
+          \href{https://nimahejazi.org}{nimahejazi.org} \\
+        \includegraphics[scale=0.12]{pdf-icon.png}
+        \href{https://bit.ly/2019\_bioc\_modtmle}{bit.ly/2019\_bioc\_modtmle}\\
+        Joint work with Alan Hubbard and Mark van der Laan
+    \end{minipage}%
+    \begin{minipage}{0.35\textwidth}
+      \centering
+      \includegraphics[height=0.80in,width=0.80in]{ucberkeleyseal_874_540.eps}
+    \end{minipage}
+  \end{figure}
 }
 
+\date{25 June 2019}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 
-% title slide
-{
-\setbeamertemplate{footline}{} % no page number here
-\frame{
+\begin{frame}[noframenumbering]
+  \thispagestyle{empty}
   \titlepage
+\end{frame}
 
-  \vspace{-2em}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  \centerline{\href{https://goo.gl/6ou8YR}{\tt \scriptsize \underline{slides}: goo.gl/6ou8YR}}
-
-  \vfill \hfill \includegraphics[height=6mm]{Figs/cc-zero.png} \vspace*{-0.75cm}
-
-  \note{These are slides for a talk given most recently at the Division of
-    Biostatistics seminar series, at the University of California, Berkeley on
-    20 March 2017.
-
-    Source: {\tt https://github.com/nhejazi/talk\_biotmle} \\
-    Slides: {\tt https://goo.gl/r3zsu6} \\
-    With notes: {\tt https://goo.gl/6ou8YR}
-}
-}
-}
-
-
-
-\begin{frame}[c]{Preview}
-\only<1>{\addtocounter{framenumber}{-1}}
+\begin{frame}[c,noframenumbering]{Preview}
+\thispagestyle{empty}
 \begin{center}
 \begin{enumerate}
   \itemsep12pt
-  \item Linear models are the standard approach for analyzing microarray and
-    next-generation sequencing data (e.g., R package ``limma'').
-  \item Moderated statistics help reduce false positives by using an empirical
-    Bayes method to perform standard deviation shrinkage for test statistics.
-  \item \textit{Beyond linear models:} we can assess evidence using parameters
-    that are more scientifically interesting (e.g., ATE) by way of TMLE.
-  \item The approach of moderated statistics easily extends to the case of
-    asymptotically linear parameters.
+  \item Model misspecification seriously undermines the utility of many common
+    statistical modeling approaches.
+  \item Non/semi-parametric theory allows the construction of robust estimators
+    that accommodate the use of machine learning.
+  \item Moderated variance estimators augment hypothesis testing strategies to
+    reduce false positives in small-sample settings.
+  \item The moderation approach pioneered by the \texttt{limma} \texttt{R}
+    package may easily be extended to non/semi-parametric estimators.
 \end{enumerate}
 \end{center}
-
 
 \note{We'll go over this summary again at the end of the talk. Hopefully, it
       will all make more sense then.
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\begin{frame}[c]{Motivation: Let's meet the data}
+\begin{frame}[c]{Data structure and notation}
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item Observational study of the impact of occupational exposure (to benzene),
-    with data collected on $125$ subjects and roughly $22,000$ biomarkers.
-  \item Biomarkers of interest are in the form of \textbf{miRNA}, assessed
-    using the \textit{Illumina Human Ref-8 BeadChips} platform.
-  \item Occupational exposure to benzene reported as discrete values of
-    interest (to epidemiologists): none, $<1$ppm, $>5$ppm.
-  \item Background (phenotype-level) information available on each subject,
-    including age, sex, smoking status.
+  \item Consider a nonparametric structural equation model (NPSEM) to describe
+    observed data $O$ \citep{pearl2000causality}:
+    \begin{equation*}\label{npsem}
+        W = f_W(U_W); A = f_A(W, U_A); Y = f_Y(A, W, U_Y).
+      \end{equation*}
+  \item $f_W$, $f_A$, $f_Y$ are flexible but deterministic functions; $U_W$,
+    $U_A$, $U_Y$ are exogenous RVs specifying unobserved errors.
+  \item Data on a single unit $O = (W, A, Y)$, where $O \sim P_0 \in
+    \mathcal{M}$. Observe $O_1, \ldots, O_n$, i.e., $n$ i.i.d.~copies of $O$.
+  \item $Y = (Y_b: b = 1, \ldots B)$ is a vector of biomarker outcomes.
 \end{itemize}
 \end{center}
 
-
-\note{This is not an atypical data set by modern standards in epidemiology,
-      certainly not the standard for molecular biology. That is, sample sizes
-      are usually much smaller in experiments examining biological processes.
+\note{
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\begin{frame}[c]{Data analysis? Linear models!}
+\begin{frame}[c]{Interventions and causal inference}
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item For each biomarker ($b = 1, \dots, B$), fit a linear model:
-    \[
-    \mathbb{E}[y_b] = X \beta_b
-    \]
-  \item Generally, we have a particular model coefficent in which we are
-    interested (e.g., effect of benzene on biomarker expression).
-  \item Controlling for baseline covariates, batch effects, and potential
-    confounders happens by adding terms to the linear model.
-  \item Test the coefficent of interest using a standard t-test:
-    \[
-      t_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{s_b}
-    \]
+  \item NPSEM: time-ordering and counterfactual RV distributions.
+  \item \textit{Static intervention} replaces $f_A$ with an assigned value
+    $A = a$.
+  \item Generates a counterfactual RV $Y(a) = (Y_b^{a}, b: 1, \ldots B)$:
+    expression of $B$ biomarkers when $A$ is set to $a$.
+  \item Thus, we have potential outcomes $Y_b(1)$ (for $\text{do}(A=1)$) and
+    $Y_b(0)$ (for $\text{do}(A=0)$) \citep{rubin2005causal}.
+  \item We've now just about defined a canonical causal parameter, the ATE:
+    $\psi_b = \E_W[Y_b(1) - Y_b(0)]$ \citep{pearl2000causality}.
 \end{itemize}
 \end{center}
 
+\note{Statistical parameter may be viewed as a simple adjusted difference in
+  means even when identifiability conditions appear unsatisfiable.
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}[c]{A familiar workhorse: the linear model}
+\begin{center}
+\begin{itemize}
+  \itemsep12pt
+  \item The linear model is \textit{semiparametric} --- linear in parameters!
+  \item Flexible: accommodate transformations, interactions, etc.
+  \item For each biomarker ($b = 1, \ldots, B$), fit a \textit{working} linear
+    model.
+  \item Under the working model, the parameter $\beta_b$ captures the ATE,
+    allowing construction of estimators and inference.
+  \item Test the coefficent of interest using a standard t-test:
+    \[ t_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{s_b} \]
+\end{itemize}
+\end{center}
 
 \note{There's nothing particularly wrong with this approach. It's exactly what
       we would come up with after a first-year statistics course. In practice,
       there are many issues: (1) we are forced to specify a functional form, the
       linear model; (2) we end up with unstable variance estimates that sharply
       increase the number of false positives detected, even after multiple
-      testing corrections.
+      testing corrections. In practice, the incredible flexibility of the linear
+      mode is rarely taken advantage of --- scientific guidance is usually
+      lacking to justify the fitting of richer models.
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\begin{frame}[c]{LIMMA: Linear Models for Microarray Data}
+\begin{frame}[c]{Variance moderation robustifies inference}
 
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item When the sample size is small, $s^2_b$ may be so small that small
-    differences ($\hat{\beta}_{b} - \beta_{b, H_0}$) lead to large $t_{b}$.
-  \item Uncertainty in the variance is an acute problem when the sample size is
-    small.
+  \item When the sample size is small, $s^2_b$ may be so small that even small
+    effects ($\hat{\beta}_{b} - \beta_{b, H_0}$) lead to large $t_{b}$.
   \item This results in false positives. Smyth proposes we get around this by an
     empirical Bayes shrinkage of the $s^2_b$.
   \item Test the coefficent of interest with a \textbf{moderated} t-test:
     \[
-      \tilde{t}_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{\tilde{s}_b},
-      \;
+      \tilde{t}_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{\tilde{s}_b}
+      \quad \text{where} \quad
       \tilde{s}^2_b = \frac{s^2_bd_b + s^2_0d_0}{d_b + d_0}
     \]
-  \item Eliminates large t-statistics merely from very small $s_b$.
+  \item Eliminates large t-statistics arising merely from very small $s_b$.
 \end{itemize}
 \end{center}
 
@@ -191,56 +256,21 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\begin{frame}[c]{Beyond linear models}
-
-\begin{center}
-\begin{itemize}
-  \itemsep12pt
-  \item It's not always desirable to specify a functional form: perhaps we can
-    do better than linear models?
-  \item Such models are a matter of convenience and not honest scientific
-    practice: does $\hat{\beta}_{b}$ really answer our questions?
-  \item We can do better by using parameters motivated by causal models (n.b.,
-    these will reduce to ``variable importance measures'' in our case).
-  \item As long as the parameters we seek to estimate have asymptotically linear
-    estimators, we can readily apply the approach of moderated statistics.
-\end{itemize}
-\end{center}
-
-\note{Linear models are convenient for communicating results --- that is, all
-      scientists are trained to understand them. This means they provide a basic
-      way of easily communicating between statisticians and collaborators. That
-      said, doesn't it seem a bit odd to use such elementary models to analyze
-      complex biological sequencing data? We're using old statistical technology
-      to analyze classes of data that have only recently become available.
-}
-\end{frame}
-
-
-
-\begin{frame}[c]{Target parameters for complex questions}
+\begin{frame}[c]{Variable importance measures as target parameters}
 
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item Rather than being satisfied with $\hat{\beta}_{b}$ as an answer to our
-    questions, let's consider a simple target parameter: the average treatment
-    effect (ATE):
-    \[
-      \Psi_b(P_0) = \mathbb{E}_{W,0}[\mathbb{E}_0[Y_b \mid A = a_{high}, W] -
-      \mathbb{E}_0[Y_b \mid A = a_{low}, W]]
-    \]
-  \item No need to specify a functional form or assume that we know the true
-    data-generating distribution $P_0$.
-  \item Parameters like this can be estimated using \textit{targeted minimum
-    loss-based estimation} (TMLE).
-  \item \textbf{Asymptotic linearity:}
-    \[
-      \Psi_b(P_n^*) - \Psi_b(P_0) = \frac{1}{n} \sum_{i = 1}^{n} IC(O_i) +
-      o_P(\frac{1}{\sqrt{n}})
-    \]
+  \item If the working model is incorrect, $\beta_b$ does not correspond to the
+    ATE --- thus leading to biased results.
+  \item The statistical functional identifying the ATE may be used as a variable
+    importance measure (VIM):
+    \[ \Psi_b(P_0) = \mathbb{E}_{W,0}[\mathbb{E}_0[Y_b \mid A = 1, W] -
+      \mathbb{E}_0[Y_b \mid A = 0, W]] \]
+  \item One-step and targeted minimum loss estimation build efficient, doubly
+    robust estimators $\Psi_b(P_n^{\star})$ of $\Psi_b(P_0)$.
 \end{itemize}
 \end{center}
 
@@ -252,26 +282,24 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\begin{frame}[c]{Targeted Minimum Loss-Based Estimation}
+\begin{frame}[c]{Robust and locally efficient estimation}
 
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item TMLE produces a well-defined, unbiased, efficient substitution estimator
-    of target parameters of a data-generating distribution.
-  \item Iterative procedure (though there is a one-step now) that updates an
-    initial estimate of the relevant part ($Q_0$) of the data generating
-    distribution ($P_0$).
-  \item Like corresponding A-IPTW estimators, removes asymptotic residual bias
-    of initial estimator for the target parameter. If it uses a consistent
-    estimator of $g_0$ (nuisance parameter), it is \textit{doubly robust}.
-  \item We can estimate the target parameter:
-    \[
-      \Psi_b(P_n^*) = \frac{1}{n}\sum_{i=1}^{n}[Q_n^{(b,1)}(A_i = a_h, W_i) -
-      Q_n^{(b,1)}(A_i = a_l, W_i)]
-    \]
+  \item Asymptotic linearity:
+    \[ \Psi_b(P_n^{\star}) - \Psi_b(P_0) = \frac{1}{n} \sum_{i = 1}^{n}
+      D_b(O_i) + o_P\left(\frac{1}{\sqrt{n}}\right) \]
+  \item The influence function $D_b$ for the ATE takes the form
+    \begin{align*}
+      D_b (O_i) =& \left[\frac{2A_i - 1}{g_0(A_i \mid W_i)} \right] (Y_{b, i} -
+      Q_{0,b}(A_i, W_i))\\ &+ Q_{0,b}(1, W_i) - Q_{0,b}(0, W_i) - \Psi_b,
+    \end{align*}
+    where $g_0(A \mid W) = \mathbb{P}_0(A = 1 \mid W)$ is the treatment
+    mechanism and $Q_{0,b}(A,W) = \mathbb{E}_0[Y_b \mid A, W]$ is the outcome
+    model.
 \end{itemize}
 \end{center}
 
@@ -282,32 +310,51 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-\begin{frame}[c]{Inference with influence curves}
+\begin{frame}[c]{Robust and locally efficient estimation}
 
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item The influence curve for the estimator is:
-  \begin{dmath}
-    IC_{b,n}(O_i) = \left (\frac{\mathbbm{1}(A_i = a_{h})}{g_n(a_{h} \mid W_i)}
-    - \frac{\mathbbm{1}(A_i = a_{l})}{g_n (a_{l} \mid W_i)} \right) \cdot
-    (Y_{b,i} - \bar{Q}^{(b,1)}_n(A_i, W_i)) +
-    \bar{Q}^{(b,1)}_n(a_{h}, W_i) - \bar{Q}^{(b,1)}_n(a_{l}, W_i) -
-    \Psi_{b}(P_n^*)
-  \end{dmath}
-  \item Sample variance of the influence curve:
-    \[
-      \textstyle s^2(IC_n) = \frac{1}{n}\sum_{i=1}^n\left(IC_n(O_i) \right)^2
-    \]
-  \item Use sample variance to estimate the standard error:
-    \[
-      se_n = \sqrt{\frac{s^2(IC_n)}{n}}
-    \]
-  \item Use this for inference --- that is, to derive uncertainty measures
-    (i.e., p-values, confidence intervals).
+  \item wrt the data $O = (W,A,Y)$, $D_b(O)$ admits an orthogonal decomposition
+    --- i.e.,$D_b(O) = D_b^Y(O) + D_b^A(O) + D_b^W(O)$.
+  \item Under randomization, $D_b^A(O) = 0$ and need not be estimated, though
+    estimation improves overall efficiency \citep{tsiatis2007semiparametric}.
+  \item No need to specify functional forms or assume we know the model
+    underlying the true data-generating distribution $P_0$.
+  \item Machine learning to estimate nuisance functions $g_0(A \mid W)$ and
+    $Q_{0,b}(A,W)$, e.g., via stacked regression or cross-validation selectors
+    \citep{breiman1996stacked, vdl2007super}.
+\end{itemize}
+\end{center}
+
+\note{Natural use of machine learning methods for the estimation of both $Q_0$
+      and $g_0$. Focuses effort to achieve minimal bias and asymptotic
+      semiparametric efficiency bound for the variance, but still get inference
+      (with some assumptions).
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Robust inference via the influence function}
+
+\begin{center}
+\begin{itemize}
+  \itemsep12pt
+  \item Suppose we have estimated $g_0(A \mid W)$ and $Q_{0,b}(A,W)$ via ML,
+    yielding an estimate $D_{n,b}(O)$ of $D_b(O)$, for $b = 1, \ldots, B$.
+  \item Conservative variance estimator for $\Psi_b(P_n^{\star})$ based on
+    $D_{n,b}(O)$:
+    \begin{equation*}
+      se_b = \sqrt{\frac{s^2(D_{n,b})}{n}} \quad \text{where} \quad
+      s^2(D_{n,b}) = \frac{1}{n}\sum_{i=1}^n\left(D_{n,b}(O_i) \right)^2
+    \end{equation*}
+  \item Under $H_0: \Psi_b(P_0) = 0$ (no treatment effect), test statistic:
+    \begin{equation*}
+      t_b = \frac{\Psi_b(P_n^{\star})}{se_b}
+    \end{equation*}
 \end{itemize}
 \end{center}
 
@@ -316,26 +363,24 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\begin{frame}[c]{Moderated statistics for target parameters}
+\begin{frame}[c]{Moderated statistics based on influence functions}
 
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item One can define a standard t-test statistic for an estimator of an
-    asymptotically linear parameter (over $b = 1, \dots, B$) as:
-    \[
-      t_b = \frac{\sqrt{n}(\Psi_b(P_n^*) - \Psi_0)}{s_b(IC_{b,n})}
-    \]
-  \item This naturally extends to the moderated t-statistic of Smyth:
-    \[
-      \tilde{t}_b = \frac{\sqrt{n}(\Psi_b(P_n^*) - \Psi_0)}{\tilde{s}_b}
-    \]
-    where the posterior estimate of the variance of the influence curve is
-    \[
-      \tilde{s}^2_b = \frac{s^2_b(IC_{b,n})d_b + s^2_0d_0}{d_b + d_0}
-    \]
+  \item Moderated t-statistic of~\cite{smyth2004linear} naturally extends to
+    locally efficient estimators:
+    \begin{equation*}
+      \tilde{t}_b = \frac{\Psi_b(P_n^{\star})}{\widetilde{se}_b}
+    \end{equation*}
+    where the posterior estimate of influence function variance is
+    \begin{equation*}
+      \tilde{s}^2_b = \frac{s^2_b(D_{n,b}) d_b + s^2_0 d_0}{d_b + d_0}
+    \end{equation*}
+  \item Preserves robust variance estimator but adds stability that smoothens
+    its small-sample behavior.
 \end{itemize}
 \end{center}
 
@@ -351,45 +396,27 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\begin{frame}[c]{An influence curve transform}
-
-\begin{center}
-\begin{itemize}
-  \itemsep12pt
-  \item Need the estimate for each biomarker ($b$) and the IC for every
-    observation for that biomarker, repeating for all $b = 1, \dots, B$.
-  \item Essentially, transform original data matrix such that new entries are:
-    \[
-      Y^*_{b,i} = IC_{b,n}(O_i; P_n) + \Psi_b(P_n^*)
-     \]
- \item Since $\mathbb{E}[IC_{b,n}] = 0$ across the columns (units) for each $b$,
-   the average will be the original estimate $\Psi_b(P_n^*)$.
-  \item For simplicity, let's assume the null value is $\Psi_0 = 0$ for all $b$.
-    Then, applying the moderated t-test to $Y^*_{b,i}$ will generate corrected,
-    conservative test statistics $\tilde{t}_b$.
-\end{itemize}
-\end{center}
-
-\note{Just like the one-sample problem for estimation of parameter with
-    associated standard error from the influence curve.}
-\end{frame}
-
-
-
-\begin{frame}[c]{Why moderated statistics in this context?}
+\begin{frame}[c]{That's nice and all but where's the proof?}
 
 \begin{center}
 \begin{itemize}
-  \item Often times, such data analyses are based on relatively small samples.
-  \item To get a data-adaptive estimate, with standard implementation of these
-    estimates, standard errors can be non-robust.
-\item Practically, ``significant'' estimates of variable importance measures may
-  be driven by poorly and underestimated $s^2_b(IC_{b,n})$.
-\item Moderated statistics shrink these $s^2_b(IC_{b,n})$ (making them bigger),
-  thus taking biomarkers with small parameter estimates but very small
-  $s^2_b(IC_{b,n})$ out of statistical significance.
+  \item Simulation study under two settings: (1) global null and (2) when half
+    of probes respond to treatment.
+    \begin{align*}
+      W_1 &\sim \text{Unif}(0, 1);
+      W_2 \sim \text{Unif}(0, 1)\\
+      A &\sim \text{Bern}\left(\text{expit}(-1.2 - 2.5 \cdot W_1 + 3.5 \cdot
+        W_2)\right) \\
+      Y_{\text{null}} &= 2 + 5 \cdot W_1 + 0.5 \cdot W_2 + W_1 \cdot W_2 +
+        \epsilon\\
+      Y_{\text{non-null}} &= 2 + 5 \cdot W_1 + 0.5 \cdot W_2 + W_1 \cdot W_2 +
+        5 \cdot A + \epsilon,
+    \end{align*}
+  \item Data-adaptive estimation of relevant nuisance quantities.
+  \item Compares TML estimator of ATE to working linear model, under moderated
+    and standard variance estimates.
 \end{itemize}
 \end{center}
 
@@ -402,19 +429,62 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{frame}[c]{That's nice and all but where's the proof? Global null.}
 
-\begin{frame}[c]{Software implementation: ``R/biotmle''}
+\centering
+\includegraphics[origin=c,scale=0.25]{vis_fdr_sl_null_logistic}
+
+\note{
+  \begin{itemize}
+    \item Control of the FDR using the Benjamini-Hochberg
+      correction applied to the results of hypothesis tests based on
+      \texttt{limma}, standard TML estimator without variance moderation, and
+      TML estimator with variance moderation.
+  \item TML estimators converges to the correct FDR asymptotically and achieves
+    the nominal rate by $n = 250$ while the moderated linear model does not
+    exhibit correct control of the FDR.
+  \end{itemize}
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{That's nice and all but where's the proof? Treatment effect.}
+
+\centering
+\includegraphics[origin=c,scale=0.25]{vis_fdr_sl_findings_logistic}
+
+\note{
+  \begin{itemize}
+    \item Control of the FDR using the Benjamini-Hochberg correction applied to
+      the results of hypothesis tests based on the moderated linear modeling
+      approach of \texttt{limma}, the standard TML estimator without any
+      variance moderation, and the TML estimator with variance moderation.
+      Application of TML estimators converges to the correct FDR asymptotically
+      and achieves the nominal rate by $n = 250$ while the moderated linear
+      model does not exhibit correct control of the FDR.
+  \end{itemize}
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Software implementation: \texttt{R/biotmle}}
 
 \begin{center}
 \begin{itemize}
   \itemsep12pt
-  \item An R package that ``facilitates biomarker discovery by generalizing the
-    moderated t-statistic of Smyth for use with asymptotically linear
-    parameters.''
-  \item Check it out on GitHub: \href{https://github.com/nhejazi/biotmle}
-    {nhejazi/biotmle} \\[1em]
-    \includegraphics<2->[width=.92\textwidth]{Figs/biotmle.png}
+  \item \texttt{R} package for DE analysis based on TML estimators of the ATE
+    that use machine learning for $g_0(A \mid W)$ and $Q_{0,b}(A,W)$.
+  \item Statistical inference based on \textit{moderated} variance estimator.
+  \item Check out the package:
+    \begin{itemize}
+      \itemsep8pt
+      \item \url{https://github.com/nhejazi/biotmle}
+      \item \url{https://bioconductor.org/packages/biotmle}
+    \end{itemize}
 \end{itemize}
 \end{center}
 
@@ -422,101 +492,44 @@
 }
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{frame}[c]{The \texttt{tlverse} for Targeted Learning}
 
-\begin{frame}[c]{Data analysis with ``R/biotmle''}
-
-\begin{center}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{tlverse}
+  \caption{
+    \url{https://github.com/tlverse}
+  }
+\end{figure}
 \begin{itemize}
   \itemsep12pt
-  \item Observational study of the impact of occupational exposure (to benzene),
-    with data collected on $125$ subjects and roughly $22,000$ biomarkers.
-  \item Baseline covariates $W$: age, sex, smoking status; all were discretized.
-  \item Treatment $A$ is degree of Benzene exposure: none, $<1$ppm, and $>5$ppm.
-  \item Outcome $Y$ is miRNA expression, median normalized.
-  \item Estimate the parameter:
-    \[
-      \Psi_b(P_n^*) = \mathbb{E}[\mathbb{E}[Y_b \mid A = \text{max}(A), W] -
-      \mathbb{E}[Y_b \mid A = \text{min}(A), W]]
-    \]
-  \item Apply moderated t-test as previously discussed.
+  \item An ecosystem of \texttt{R} packages for Targeted Learning, all sharing a
+    core set of design principles centered on extensibility.
+  \item \textit{Draft phase} Targeted Learning handbook:
+    \url{https://tlverse.org/tlverse-handbook}
 \end{itemize}
-\end{center}
 
-\note{We are really just walking through the mechanistic procedure we outline,
-      applying to the data set that served as our motivating example.
+\note{Use it. File issues. Help make it better!
 }
 \end{frame}
 
 
-
-\begin{frame}[c]{Analysis results I: Uncorrected tests}
-
-\begin{center}
-  \includegraphics[scale=0.47]{Figs/limma_rawp.pdf}
-\end{center}
-
-\note{This is promising --- we're not seeing too many biomarkers identified as
-      ``significant.'' But, we do have to correct for those $22,000$ tests that
-      we just performed.
-}
-\end{frame}
-
-
-
-\begin{frame}[c]{Analysis results II: Corrected tests}
-
-\begin{center}
-  \includegraphics[scale=0.47]{Figs/limma_adjp.pdf}
-\end{center}
-
-\note{After application of the Benjamini-Hochberg procedure for controlling the
-      False Discovery Rate (FDR).
-}
-\end{frame}
-
-
-
-\begin{frame}[c]{Analysis results III: Volcano plot}
-
-\begin{center}
-  \includegraphics[scale=0.6]{Figs/volcano.png}
-\end{center}
-
-\note{Taking a look at a standard volcano plot adapted to the ATE quickly
-      reveals that we really are not identifying any biomarkers with low fold
-      change in the ATE as significant erroneously.
-}
-\end{frame}
-
-
-
-\begin{frame}[c]{Analysis results IV: Heatmap of IC estimates}
-
-\begin{center}
-  \includegraphics[scale=0.45]{Figs/superheatmap.png}
-\end{center}
-
-\note{We can use our influence curve transform to identify biomarkers that are
-      top contributers to the target parameter of interest --- the ATE in this
-      case.
-}
-\end{frame}
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[c]{Review}
 \begin{center}
 \begin{enumerate}
   \itemsep12pt
-  \item Linear models are the standard approach for analyzing microarray and
-    next-generation sequencing data (e.g., R package ``limma'').
-  \item Moderated statistics help reduce false positives by using an empirical
-    Bayes method to perform standard deviation shrinkage for test statistics.
-  \item \textit{Beyond linear models:} we can assess evidence using parameters
-    that are more scientifically interesting (e.g., ATE) by way of TMLE.
-  \item The approach of moderated statistics easily extends to the case of
-    asymptotically linear parameters.
+  \item Model misspecification seriously undermines the utility of many common
+    statistical modeling approaches.
+  \item Non/semi-parametric theory allows the construction of robust estimators
+    that accommodate the use of machine learning.
+  \item Moderated variance estimators augment hypothesis testing strategies to
+    reduce false positives in small-sample settings.
+  \item The moderation approach pioneered by the \texttt{limma} \texttt{R}
+    package may easily be extended to non/semi-parametric estimators.
 \end{enumerate}
 \end{center}
 
@@ -524,65 +537,39 @@
 \note{It's always good to include a summary.}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{frame}[c,allowframebreaks]{}
 
-\begin{frame}[c,allowframebreaks]{References}
+\small
 \bibliographystyle{apalike}
-\nocite{*}
+%\nocite{*}
 \bibliography{references}
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{frame}[c]{Thank you, Bioconductor.}
 
-\begin{frame}[c]{Acknowledgments}
-\vspace{10pt}
-\begin{tabular}{@{}l@{\hspace{1.5cm}}l@{}}
-Alan Hubbard & \footnotesize \lolit University of California, Berkeley \\
-\\[0.5ex]
-Mark van der Laan & \footnotesize \lolit University of California, Berkeley \\
+\large
+Slides: \href{https://bit.ly/2019\_bioc\_modtmle}{bit.ly/2019\_bioc\_modtmle}
+  \quad
+\includegraphics[height=4mm]{Figs/cc-zero.png}
 
-%\\[2ex]
+\vspace{2mm}
+\includegraphics[scale=0.14]{homepage.png} \url{https://nimahejazi.org}
 
-%Collaborator, the first & \footnotesize \lolit University or Institution 2 \\
-%Collaborator, the second & \footnotesize \lolit University or Institution 2 \\
-\end{tabular}
+\vspace{2mm}
+\includegraphics[scale=0.11]{github-icon.png}
+  \url{https://github.com/nhejazi}
 
-\vspace{10mm}
-
-%NIH - funding source ?
-
-\note{This was all made possible by generous advising and collaboration.}
-\end{frame}
-
-
-
-\begin{frame}[c]{}
-
-\Large
-Slides: \href{https://goo.gl/6ou8YR}{goo.gl/6ou8YR} \quad
-\includegraphics[height=5mm]{Figs/cc-zero.png}
-
-\vspace{10mm}
-
-\href{https://www.stat.berkeley.edu/~nhejazi}{\tt stat.berkeley.edu/\textasciitilde{}nhejazi}
-
-\vspace{10mm}
-
-\href{http://nimahejazi.org}{\tt nimahejazi.org}
-
-\vspace{10mm}
-
-\href{https://twitter.com/nshejazi}{\tt twitter/@nshejazi}
-
-\vspace{10mm}
-
-\href{https://github.com/nhejazi}{\tt github/nhejazi}
-
+\vspace{2mm}
+\includegraphics[scale=0.14]{twitter-icon.png}
+  \url{https://twitter.com/nshejazi}
 
 \note{Here's where you can find me, as well as the slides for this talk.}
+
 \end{frame}
-
-
 
 \end{document}

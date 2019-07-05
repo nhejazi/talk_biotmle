@@ -2,7 +2,7 @@ TITLE = 2019_bioc_biotmle
 
 .PHONY : minimal
 minimal: $(TITLE).pdf clean
-all: $(TITLE).pdf notes web clean
+all: $(TITLE).pdf notes clean web
 
 $(TITLE).pdf: $(TITLE).tex header.tex
 	xelatex $(TITLE)
@@ -36,4 +36,3 @@ web: $(TITLE).pdf $(TITLE)_withnotes.pdf
 		nhejazi@arwen.berkeley.edu:/mirror/data/pub/users/nhejazi/present/$(TITLE).pdf
 	rsync --chmod=go+r $(TITLE)_withnotes.pdf \
 		nhejazi@arwen.berkeley.edu:/mirror/data/pub/users/nhejazi/present/$(TITLE)_withnotes.pdf
-

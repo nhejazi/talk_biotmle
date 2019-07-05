@@ -26,4 +26,3 @@ protecting against the unreliability introduced by small-sample inference.
 Time-permitting, we also discuss recently developed software (the `biotmle` R
 package: https://bioconductor.org/packages/biotmle) as well as methods to
 circumvent the statistical pitfalls of multiple comparisons.
-
