@@ -8,7 +8,7 @@
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
 
-%\usepackage{coloremoji}
+\usepackage{cancel}
 \usepackage{layout}
 \usepackage{multirow}
 \usepackage{array}
@@ -94,27 +94,28 @@
   \begin{figure}[!htb]
     \centering
     \begin{minipage}{.65\textwidth}
-        Graduate Group in Biostatistics, and \\
-        Center for Computational Biology, \\
-        University of California, Berkeley \\[6pt]
+        Department of Biostatistics, \\
+        T.H.~Chan School of Public Health, \\
+        Harvard University \\[6pt]
         \includegraphics[scale=0.12]{twitter-icon.png}
           \href{https://twitter.com/nshejazi}{nshejazi} \\
         \includegraphics[scale=0.09]{github-icon.png}
           \href{https://github.com/nhejazi}{nhejazi} \\
         \includegraphics[scale=0.12]{homepage.png}
           \href{https://nimahejazi.org}{nimahejazi.org} \\
-        \includegraphics[scale=0.12]{pdf-icon.png}
-        \href{https://bit.ly/2019\_bioc\_modtmle}{bit.ly/2019\_bioc\_modtmle}\\
-        Joint work with Alan Hubbard and Mark van der Laan
+     Biomedical AI Seminar, \\
+     University of Edinburgh\\
+     \textit{Joint work with A.~Hubbard, M.~van der Laan, P.~Boileau}
     \end{minipage}%
-    \begin{minipage}{0.35\textwidth}
+    \begin{minipage}{0.3\textwidth}
       \centering
-      \includegraphics[height=0.80in,width=0.80in]{ucberkeleyseal_874_540.eps}
+      \vspace{-80pt}
+      \includegraphics[width=1.1in]{hsph}
     \end{minipage}
   \end{figure}
 }
 
-\date{25 June 2019}
+\date{04 November 2022}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -131,15 +132,16 @@
 \thispagestyle{empty}
 \begin{center}
 \begin{enumerate}
-  \itemsep12pt
-  \item Model misspecification seriously undermines the utility of many common
-    statistical modeling approaches.
-  \item Non/semi-parametric theory allows the construction of robust estimators
-    that accommodate the use of machine learning.
-  \item Moderated variance estimators augment hypothesis testing strategies to
-    reduce false positives in small-sample settings.
-  \item The moderation approach pioneered by the \texttt{limma} \texttt{R}
-    package may easily be extended to non/semi-parametric estimators.
+  \itemsep6pt
+  \item Modern computational biology research produces complex, heterogeneous
+    data --- innovative statistical inference still tied to simplistic and
+    challenging-to-verify modeling assumptions.
+  \item \textit{Model misspecification} seriously undermines the scientific
+    utility of common, classical statistical modeling approaches.
+  \item Non/semi-parametric inference facilitates constructing robust estimators
+    that easily bring machine learning into the fold.
+  \item Variance moderation strengthens hypothesis testing strategies, reducing
+    false positives and preserving power under instability.
 \end{enumerate}
 \end{center}
 
@@ -150,20 +152,18 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Data structure and notation}
+\begin{frame}[c]{A common problem}
 \begin{center}
 \begin{itemize}
-  \itemsep12pt
-  \item Consider a nonparametric structural equation model (NPSEM) to describe
-    observed data $O$ \citep{pearl2000causality}:
-    \begin{equation*}\label{npsem}
-        W = f_W(U_W); A = f_A(W, U_A); Y = f_Y(A, W, U_Y).
-      \end{equation*}
-  \item $f_W$, $f_A$, $f_Y$ are flexible but deterministic functions; $U_W$,
-    $U_A$, $U_Y$ are exogenous RVs specifying unobserved errors.
-  \item Data on a single unit $O = (W, A, Y)$, where $O \sim P_0 \in
-    \mathcal{M}$. Observe $O_1, \ldots, O_n$, i.e., $n$ i.i.d.~copies of $O$.
-  \item $Y = (Y_b: b = 1, \ldots B)$ is a vector of biomarker outcomes.
+  \itemsep6pt
+  \item \textit{Question}: What factors are associated (``causally'' perhaps)
+    with a health outcome of interest (e.g., cancer, death).
+  \item \textit{Experiment}: Assign\textsuperscript{?} patients to novel therapy
+    vs.~standard of care (or exposure) and then evaluate outcome's occurrence.
+  \item \textit{Goal}: Deepen \underline{mechanistic} insights --- how does the
+    therapy or exposure biologically operate? Identify intervention points.
+  \item Combine tools from $\star$-omics and molecular biology, clinical trials,
+    causal inference, (bio)statistics, epidemiology.
 \end{itemize}
 \end{center}
 
@@ -173,19 +173,88 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Interventions and causal inference}
+\begin{frame}[c]{Let's meet the data: Benzene exposure and miRNA}
 \begin{center}
 \begin{itemize}
-  \itemsep12pt
-  \item NPSEM: time-ordering and counterfactual RV distributions.
-  \item \textit{Static intervention} replaces $f_A$ with an assigned value
-    $A = a$.
-  \item Generates a counterfactual RV $Y(a) = (Y_b^{a}, b: 1, \ldots B)$:
-    expression of $B$ biomarkers when $A$ is set to $a$.
-  \item Thus, we have potential outcomes $Y_b(1)$ (for $\text{do}(A=1)$) and
-    $Y_b(0)$ (for $\text{do}(A=0)$) \citep{rubin2005causal}.
-  \item We've now just about defined a canonical causal parameter, the ATE:
-    $\psi_b = \E_W[Y_b(1) - Y_b(0)]$ \citep{pearl2000causality}.
+  \itemsep6pt
+  \item \textit{Question}: Which miRNA (non-coding regulators) are affected by
+    a target occupational exposure (benzene)?
+  \item \textit{Why?} Attempt to decipher how patterns of miRNA disregulation
+    may impact subsequent disease states.
+  \item \textit{Study}: Cohort study of occupational exposure to benzene with
+    $125$ individuals and $22$K candidate miRNA assayed.
+  \item \textit{Goal}: Characterize biological mechanisms or signatures derived
+    from or attributable to exposure.
+\end{itemize}
+\end{center}
+
+\note{
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Let's meet the data: Smoking and DNA methylation}
+\begin{center}
+\begin{itemize}
+  \itemsep6pt
+  \item \textit{Question}: Which CpG sites, or larger functional units (e.g.,
+    ``CpG islands''), are affected by long-term smoking?
+  \item \textit{Why?} Attempt to understand how smoking induces regulatory and
+    functional changes that relate to disease (e.g., cancer).
+  \item \textit{Study}: Observational exposure study of $253$ individuals (with
+    $172$ smokers, $81$ non-smokers) and $\approx 450$K CpG sites assayed.
+  \item \textit{Goal}: Characterize biological mechanisms or signatures derived
+    from or attributable to exposure.
+\end{itemize}
+\end{center}
+
+\note{
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Data structure and notation}
+\begin{center}
+\begin{itemize}
+  \itemsep6pt
+  \item Consider a structural causal model (SCM)~\citep{pearl2000causality} to
+    describe how data on a single unit $O$ was generated:
+    \begin{equation*}\label{npsem}
+        L = f_L(U_L); A = f_A(L, U_A); Y = f_Y(A, L, U_Y).
+      \end{equation*}
+  \item $f_L$, $f_A$, $f_Y$ are unknown but deterministic functions; $U_L$,
+    $U_A$, $U_Y$ are exogenous (unobserved) random errors.
+  \item $Y = (Y_b: b = 1, \ldots B)$ is a vector of biomarker outcomes (e.g.,
+    $B = 22$K for miRNA, $B = 450$K for CpG sites).
+  \item Temporal ordering between variables: $L$ (sex-at-birth, age), $A$
+    (smoking, benzene), $Y_b$ (biomarker measurement for site $b$).
+  \item Data on a single study unit $O = (L, A, Y)$, with $O \sim P_0 \in
+    \mathcal{M}$, of which we observe $n$ i.i.d.~copies, $O_1, \ldots, O_n$.
+\end{itemize}
+\end{center}
+
+\note{
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Hypothetical interventions and causal inference}
+\begin{center}
+\begin{itemize}
+  \itemsep6pt
+  \item \textit{Static} interventions consider replacing $f_A$ with an assigned
+    value $a \in \mathcal{A}$ deterministically. ``What if everyone smoked?''
+  \item Generates ``counterfactual'' RV $Y(a) = (Y_b(a), b: 1, \ldots B)$: the
+    expression of the $B$ biomarkers if $A$ had been set to $a$.
+  \item Viewed as \textit{potential outcomes} (POs)~\citep{rubin2005causal},
+    $Y_b(1)$ when setting $A=1$ and $Y_b(0)$ when setting $A = 0$.
+  \item Note that $Y_b = A Y_b(1) + (1 - A) Y_b(0)$ --- only partially seeing
+    the POs is the \textit{fundamental problem of causal inference}.
+  \item Causal inference yields interpretable, scientifically well-aligned
+    estimands, e.g., the average treatment effect (ATE).
 \end{itemize}
 \end{center}
 
@@ -200,15 +269,16 @@
 \begin{frame}[c]{A familiar workhorse: the linear model}
 \begin{center}
 \begin{itemize}
-  \itemsep12pt
+  \itemsep6pt
   \item The linear model is \textit{semiparametric} --- linear in parameters!
-  \item Flexible: accommodate transformations, interactions, etc.
-  \item For each biomarker ($b = 1, \ldots, B$), fit a \textit{working} linear
-    model.
-  \item Under the working model, the parameter $\beta_b$ captures the ATE,
-    allowing construction of estimators and inference.
-  \item Test the coefficent of interest using a standard t-test:
-    \[ t_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{s_b} \]
+  \item Flexible: transformations ($X_j^2$), interactions ($X_j X_k$).
+  \item For biomarker $Y_b$, fit \textit{working} linear model,
+    $\mathbb{E}_0[Y_b \mid X] = X \beta$, letting (wlog) $X_1 \equiv A$ be the
+    exposure and $\beta_1$ its ``effect''.
+  \item Under this working model, the parameter $\beta_1$ is the ATE, but
+    \textit{only if} there are no interactions (i.e., without flexibility).
+  \item Test the contrast of interest with a standard t-test:
+    $$ t_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{\hat{\sigma}_b} $$
 \end{itemize}
 \end{center}
 
@@ -225,22 +295,23 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Variance moderation robustifies inference}
+\begin{frame}[c]{Variance moderation to the rescue?!}
 
 \begin{center}
 \begin{itemize}
-  \itemsep12pt
-  \item When the sample size is small, $s^2_b$ may be so small that even small
-    effects ($\hat{\beta}_{b} - \beta_{b, H_0}$) lead to large $t_{b}$.
-  \item This results in false positives. Smyth proposes we get around this by an
-    empirical Bayes shrinkage of the $s^2_b$.
-  \item Test the coefficent of interest with a \textbf{moderated} t-test:
-    \[
-      \tilde{t}_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{\tilde{s}_b}
+  \itemsep6pt
+  \item When sample size is small, $\sigma^2_b$ may be so small (by chance) that
+    even small effects ($\hat{\beta}_{b} - \beta_{b, H_0}$) give large $t_b$.
+  \item False positives! Many biomarkers flagged relevant despite small effect
+    size, only since variance is even smaller still.
+  \item Can we do better? A \textbf{moderated} t-test~\citep{smyth2004linear}:
+    $$
+      \tilde{t}_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{\tilde{\sigma}_b}
       \quad \text{where} \quad
-      \tilde{s}^2_b = \frac{s^2_bd_b + s^2_0d_0}{d_b + d_0}
-    \]
-  \item Eliminates large t-statistics arising merely from very small $s_b$.
+      \tilde{\sigma}^2_b = \frac{\sigma^2_b d_b + \sigma^2_0 d_0}{d_b + d_0}
+    $$
+  \item Helps reduce erroneously large $t_b$ by ``averaging out'' low variance
+    across each of the many biomarkers.
 \end{itemize}
 \end{center}
 
@@ -258,19 +329,21 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Variable importance measures as target parameters}
+\begin{frame}[c]{Variable importance measures as target parameters!}
 
 \begin{center}
 \begin{itemize}
-  \itemsep12pt
+  \itemsep6pt
   \item If the working model is incorrect, $\beta_b$ does not correspond to the
-    ATE --- thus leading to biased results.
-  \item The statistical functional identifying the ATE may be used as a variable
-    importance measure (VIM):
-    \[ \Psi_b(P_0) = \mathbb{E}_{W,0}[\mathbb{E}_0[Y_b \mid A = 1, W] -
-      \mathbb{E}_0[Y_b \mid A = 0, W]] \]
-  \item One-step and targeted minimum loss estimation build efficient, doubly
-    robust estimators $\Psi_b(P_n^{\star})$ of $\Psi_b(P_0)$.
+    ATE --- results polluted by \textit{misspecification bias}.
+  \item The statistical functional identifying the ATE may be used as an
+    interpretable variable importance measure (VIM):
+    $$ \psi_{b,0} \equiv \Psi_b(P_0) = \mathbb{E}_{L,0}[\mathbb{E}_0[Y_b \mid
+    A = 1, L] - \mathbb{E}_0[Y_b \mid A = 0, L]] $$
+  \item $\psi_{b,0}$ is a mapping ($\Psi_b(P_0)$) that depends on the underlying
+    true (but unknown) distribution $P_0 \in \mathcal{M}$ --- model-agnostic!
+  \item The statistical functional \textit{identifies} the ATE under untestable
+    assumptions (no unmeasured confounding, positivity).
 \end{itemize}
 \end{center}
 
@@ -284,22 +357,27 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Robust and locally efficient estimation}
+\begin{frame}[c]{Locally efficient estimation}
 
 \begin{center}
 \begin{itemize}
-  \itemsep12pt
-  \item Asymptotic linearity:
-    \[ \Psi_b(P_n^{\star}) - \Psi_b(P_0) = \frac{1}{n} \sum_{i = 1}^{n}
-      D_b(O_i) + o_P\left(\frac{1}{\sqrt{n}}\right) \]
-  \item The influence function $D_b$ for the ATE takes the form
+  \itemsep6pt
+  \item An estimator $\hat{\psi}_b$ is asymptotically linear if it admits the
+    form
+    $$ \hat{\psi}_b - \psi_{b,0} = \frac{1}{n} \sum_{i = 1}^{n}
+      D_b(O_i; P_0) + o_P\left(\frac{1}{\sqrt{n}}\right), $$
+      where $D_b(O; P_0)$ is the efficient influence function (wrt
+      $\mathcal{M}$), whose asymptotic variance is the \textit{efficiency
+      bound}.
+  \item $D_b(O; P_0)$ helps construct efficient estimators. For ATE,
     \begin{align*}
-      D_b (O_i) =& \left[\frac{2A_i - 1}{g_0(A_i \mid W_i)} \right] (Y_{b, i} -
-      Q_{0,b}(A_i, W_i))\\ &+ Q_{0,b}(1, W_i) - Q_{0,b}(0, W_i) - \Psi_b,
+      D_b (O_i; P_0) =& \left[\frac{2A_i - 1}{g_0(L_i)} \right] (Y_{b, i} -
+      \overline{Q}_{0,b}(A_i, L_i))\\ &+ \overline{Q}_{0,b}(1, L_i)
+      - \overline{Q}_{0,b}(0, L_i) - \psi_{b, 0},
     \end{align*}
-    where $g_0(A \mid W) = \mathbb{P}_0(A = 1 \mid W)$ is the treatment
-    mechanism and $Q_{0,b}(A,W) = \mathbb{E}_0[Y_b \mid A, W]$ is the outcome
-    model.
+    where $g_0(L) = \mathbb{P}_0(A = 1 \mid L)$ is the ``propensity score''
+    and $\overline{Q}_{0,b}(A,L) = \mathbb{E}_0[Y_b \mid A, L]$ is conditional
+    outcome mean.
 \end{itemize}
 \end{center}
 
@@ -312,20 +390,23 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Robust and locally efficient estimation}
+\begin{frame}[c]{Constructing locally efficient estimators}
 
 \begin{center}
 \begin{itemize}
-  \itemsep12pt
-  \item wrt the data $O = (W,A,Y)$, $D_b(O)$ admits an orthogonal decomposition
-    --- i.e.,$D_b(O) = D_b^Y(O) + D_b^A(O) + D_b^W(O)$.
-  \item Under randomization, $D_b^A(O) = 0$ and need not be estimated, though
-    estimation improves overall efficiency \citep{tsiatis2007semiparametric}.
-  \item No need to specify functional forms or assume we know the model
-    underlying the true data-generating distribution $P_0$.
-  \item Machine learning to estimate nuisance functions $g_0(A \mid W)$ and
-    $Q_{0,b}(A,W)$, e.g., via stacked regression or cross-validation selectors
-    \citep{breiman1996stacked, vdl2007super}.
+  \itemsep6pt
+  \item Examining $D_b(O; P_0)$, we know we must estimate $g_0(L)$ and
+    $\overline{Q}_{0,b}(A,L)$, but how exactly we do this is unspecified.
+  \item No need to try to exactly specify functional forms or assume we know the
+    underlying true data-generating distribution $P_0$.
+  \item Instead, machine learning to estimate $g_0(L)$ and
+    $\overline{Q}_{0,b}(A,L)$, e.g., by ensemble
+    modeling~\citep{vdl2007super}.
+  \item One-step estimator~\citep{bickel1993efficient} ``debiased'' by an
+     additive correction: $\hat{\psi}_{b}^{+} = \hat{\psi}_{b} + n^{-1}
+     \sum_{i=1}^n \hat{D}_b(O_i)$.
+  \item A valid variance estimator: $\mathbb{V}(\hat{\psi}_b^{+}) = n^{-1}
+    \sum_{i=1}^n \hat{D}_b^2(O_i)$, but small-sample behavior may be erratic.
 \end{itemize}
 \end{center}
 
@@ -338,61 +419,28 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Robust inference via the influence function}
+\begin{frame}[c]{Moderated test statistics with efficient influence functions}
 
 \begin{center}
 \begin{itemize}
-  \itemsep12pt
-  \item Suppose we have estimated $g_0(A \mid W)$ and $Q_{0,b}(A,W)$ via ML,
-    yielding an estimate $D_{n,b}(O)$ of $D_b(O)$, for $b = 1, \ldots, B$.
-  \item Conservative variance estimator for $\Psi_b(P_n^{\star})$ based on
-    $D_{n,b}(O)$:
-    \begin{equation*}
-      se_b = \sqrt{\frac{s^2(D_{n,b})}{n}} \quad \text{where} \quad
-      s^2(D_{n,b}) = \frac{1}{n}\sum_{i=1}^n\left(D_{n,b}(O_i) \right)^2
-    \end{equation*}
-  \item Under $H_0: \Psi_b(P_0) = 0$ (no treatment effect), test statistic:
-    \begin{equation*}
-      t_b = \frac{\Psi_b(P_n^{\star})}{se_b}
-    \end{equation*}
-\end{itemize}
-\end{center}
-
-\note{Using the influence curve representation, we can obtain all of the
-  standard objects of statistical interest, but for more interesting parameters.
-}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}[c]{Moderated statistics based on influence functions}
-
-\begin{center}
-\begin{itemize}
-  \itemsep12pt
+  \itemsep6pt
   \item Moderated t-statistic of~\cite{smyth2004linear} naturally extends to
-    locally efficient estimators:
+    locally efficient estimators by noticing
     \begin{equation*}
-      \tilde{t}_b = \frac{\Psi_b(P_n^{\star})}{\widetilde{se}_b}
+      \tilde{t}_b = \frac{\hat{\psi}_b^{+} - \cancel{\psi_{b,0}}{~0}}
+      {\tilde{\sigma}_b},
     \end{equation*}
-    where the posterior estimate of influence function variance is
+    where the \textit{moderated} influence function variance is
     \begin{equation*}
-      \tilde{s}^2_b = \frac{s^2_b(D_{n,b}) d_b + s^2_0 d_0}{d_b + d_0}
+      \tilde{\sigma}^2_b = \frac{\hat{\sigma}^2_b d_b + \hat{\sigma}^2_0 d_0}
+      {d_b + d_0}
     \end{equation*}
-  \item Preserves robust variance estimator but adds stability that smoothens
-    its small-sample behavior.
+  \item Preserves robust variance estimator while adding stability by
+    ``averaging out'' potentially erratic variance across biomarkers.
 \end{itemize}
 \end{center}
 
 \note{
-  \begin{itemize}
-    \item Consider this is repeated for $b = 1, \ldots, B$  different
-      biomarkers, so that one has, for each $b$:
-      $$\Psi_b(Q_{b,n}^{*}), S_b^2(IC_{b,n}),$$
-      estimate of variable importance and standard error for all $B$.
-    \item Propose an existing joint-inferential procedure that can add some
-      finite-sample robustness to an estimator that can be highly variable.
-   \end{itemize}
 }
 \end{frame}
 
@@ -475,7 +523,7 @@
 
 \begin{center}
 \begin{itemize}
-  \itemsep12pt
+  \itemsep6pt
   \item \texttt{R} package for DE analysis based on TML estimators of the ATE
     that use machine learning for $g_0(A \mid W)$ and $Q_{0,b}(A,W)$.
   \item Statistical inference based on \textit{moderated} variance estimator.
@@ -497,7 +545,7 @@
 \begin{frame}[c]{Review}
 \begin{center}
 \begin{enumerate}
-  \itemsep12pt
+  \itemsep6pt
   \item Model misspecification seriously undermines the utility of many common
     statistical modeling approaches.
   \item Non/semi-parametric theory allows the construction of robust estimators
