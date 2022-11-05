@@ -2,8 +2,8 @@
 \usetheme{metropolis}
 
 % specifications for presenter mode
-%\beamerdefaultoverlayspecification{<+->}
-%\setbeamercovered{transparent}
+\beamerdefaultoverlayspecification{<+->}
+\setbeamercovered{transparent}
 
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
@@ -103,7 +103,7 @@
           \href{https://github.com/nhejazi}{nhejazi} \\
         \includegraphics[scale=0.12]{homepage.png}
           \href{https://nimahejazi.org}{nimahejazi.org} \\
-     Biomedical AI Seminar, \\
+     Biomedical AI Seminar,\\
      University of Edinburgh\\
      \textit{Joint work with A.~Hubbard, M.~van der Laan, P.~Boileau}
     \end{minipage}%
@@ -405,8 +405,9 @@
   \item One-step estimator~\citep{bickel1993efficient} ``debiased'' by an
      additive correction: $\hat{\psi}_{b}^{+} = \hat{\psi}_{b} + n^{-1}
      \sum_{i=1}^n \hat{D}_b(O_i)$.
-  \item A valid variance estimator: $\mathbb{V}(\hat{\psi}_b^{+}) = n^{-1}
-    \sum_{i=1}^n \hat{D}_b^2(O_i)$, but small-sample behavior may be erratic.
+  \item A valid variance estimator: $\hat{\mathbb{V}}(\hat{\psi}_b^{+}) =
+    n^{-1} \sum_{i=1}^n \hat{D}_b^2(O_i)$, but small-sample behavior may be
+    erratic.
 \end{itemize}
 \end{center}
 
@@ -437,6 +438,7 @@
     \end{equation*}
   \item Preserves robust variance estimator while adding stability by
     ``averaging out'' potentially erratic variance across biomarkers.
+  \item Avoid model misspecification while stabilizing inference.
 \end{itemize}
 \end{center}
 
@@ -446,90 +448,67 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{That's nice and all but where's the proof?}
-
-\begin{center}
-\begin{itemize}
-  \item Simulation study under two settings: (1) global null and (2) when half
-    of probes respond to treatment.
-    \begin{align*}
-      W_1 &\sim \text{Unif}(0, 1);
-      W_2 \sim \text{Unif}(0, 1)\\
-      A &\sim \text{Bern}\left(\text{expit}(-1.2 - 2.5 \cdot W_1 + 3.5 \cdot
-        W_2)\right) \\
-      Y_{\text{null}} &= 2 + 5 \cdot W_1 + 0.5 \cdot W_2 + W_1 \cdot W_2 +
-        \epsilon\\
-      Y_{\text{non-null}} &= 2 + 5 \cdot W_1 + 0.5 \cdot W_2 + W_1 \cdot W_2 +
-        5 \cdot A + \epsilon,
-    \end{align*}
-  \item Data-adaptive estimation of relevant nuisance quantities.
-  \item Compares TML estimator of ATE to working linear model, under moderated
-    and standard variance estimates.
-\end{itemize}
-\end{center}
-
-\note{Essentially, we have the same concerns about using variable importance
-  measures that we did about using the standard t-test --- that is, non-robut
-  estimates of the standard error of the estimator of the target parameter can
-  cause erroneous identification of biomarkers (false positives). To reduce
-  this, we can apply the same machinery that we did in the case of the standard
-  t-test for our naive linear modeling approach.
-}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}[c]{That's nice and all but where's the proof? Global null.}
+\begin{frame}[c,noframenumbering,plain]{Let's take a look: Numerical study}
 
 \centering
-%\includegraphics[origin=c,scale=0.25]{vis_fdr_sl_null_logistic}
+\includegraphics[origin=c,scale=0.205]{fdr_sl_findings_min_logistic_g0prob_no}
 
 \note{
-  \begin{itemize}
-    \item Control of the FDR using the Benjamini-Hochberg
-      correction applied to the results of hypothesis tests based on
-      \texttt{limma}, standard TML estimator without variance moderation, and
-      TML estimator with variance moderation.
-  \item TML estimators converges to the correct FDR asymptotically and achieves
-    the nominal rate by $n = 250$ while the moderated linear model does not
-    exhibit correct control of the FDR.
-  \end{itemize}
 }
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{That's nice and all but where's the proof? Treatment effect.}
-
-\centering
-%\includegraphics[origin=c,scale=0.25]{vis_fdr_sl_findings_logistic}
-
-\note{
-  \begin{itemize}
-    \item Control of the FDR using the Benjamini-Hochberg correction applied to
-      the results of hypothesis tests based on the moderated linear modeling
-      approach of \texttt{limma}, the standard TML estimator without any
-      variance moderation, and the TML estimator with variance moderation.
-      Application of TML estimators converges to the correct FDR asymptotically
-      and achieves the nominal rate by $n = 250$ while the moderated linear
-      model does not exhibit correct control of the FDR.
-  \end{itemize}
-}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}[c]{Software implementation: \texttt{R/biotmle}}
+\begin{frame}[c]{Differential expression analysis algorithm}
 
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item \texttt{R} package for DE analysis based on TML estimators of the ATE
-    that use machine learning for $g_0(A \mid W)$ and $Q_{0,b}(A,W)$.
-  \item Statistical inference based on \textit{moderated} variance estimator.
-  \item Check out the package:
+  \item Apply a filtering procedure to reduce the set of candidate
+    biomarkers~\citep{tuglus2009modified} (optional).
+   \item For each biomarker, generate an efficient estimate of $\hat{\psi}_b$ of
+    $\psi_{0,b}$ with EIF $\hat{D}_b(O_i)$ by estimating nuisances $(g_0,
+    \overline{Q}_{0,b})$.
+  \item Apply variance moderation across the EIF estimates, yielding
+    \textit{moderated} $\tilde{\sigma}_b^2$, to be used for hypothesis testing.
+  \item Various techniques for inference are possible based on the moderated
+    test statistics -- taking advantage of near-normality, standardized logistic
+    or concentration inequalities.
+  \item Apply a multiple testing correction for accurate simultaneous inference
+    inference across all $B$ biomarkers, e.g., by controlling the False
+    Discovery Rate~\citep{benjamini1995controlling}.
+\end{itemize}
+\end{center}
+
+\note{
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c,noframenumbering,plain]{Ranking differentially methylated CpGs}
+
+\centering
+\includegraphics[origin=c,scale=0.22]{cpg_ranks}
+
+\note{
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Open-source software: \texttt{R/biotmle}!}
+
+\begin{center}
+\begin{itemize}
+  \itemsep6pt
+  \item \texttt{R} package for differential expression or methylation analysis
+     based on model-agnostic, efficient estimators of the ATE.
+  \item Incorporates machine learning and allows cross-validation.
+  \item Statistical inference based on variance \textit{moderation}.
+  \item Where can you find it?
     \begin{itemize}
-      \itemsep8pt
+      \itemsep4pt
       \item \url{https://github.com/nhejazi/biotmle}
       \item \url{https://bioconductor.org/packages/biotmle}
     \end{itemize}
@@ -546,14 +525,15 @@
 \begin{center}
 \begin{enumerate}
   \itemsep6pt
-  \item Model misspecification seriously undermines the utility of many common
-    statistical modeling approaches.
-  \item Non/semi-parametric theory allows the construction of robust estimators
-    that accommodate the use of machine learning.
-  \item Moderated variance estimators augment hypothesis testing strategies to
-    reduce false positives in small-sample settings.
-  \item The moderation approach pioneered by the \texttt{limma} \texttt{R}
-    package may easily be extended to non/semi-parametric estimators.
+  \item Modern computational biology research produces complex, heterogeneous
+    data --- innovative statistical inference still tied to simplistic and
+    challenging-to-verify modeling assumptions.
+  \item \textit{Model misspecification} seriously undermines the scientific
+    utility of common, classical statistical modeling approaches.
+  \item Non/semi-parametric inference facilitates constructing robust estimators
+    that easily bring machine learning into the fold.
+  \item Variance moderation strengthens hypothesis testing strategies, reducing
+    false positives and preserving power under instability.
 \end{enumerate}
 \end{center}
 
@@ -562,6 +542,10 @@
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% don't want dimming with references
+\setbeamercovered{}
+\beamerdefaultoverlayspecification{}
 
 \begin{frame}[c,allowframebreaks]{}
 
@@ -574,14 +558,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Thank you, Bioconductor.}
+\begin{frame}[c]{Thank you}
 
-\large
-Slides: \href{https://bit.ly/2019\_bioc\_modtmle}{bit.ly/2019\_bioc\_modtmle}
-  \quad
-\includegraphics[height=4mm]{Figs/cc-zero.png}
-
-\vspace{2mm}
 \includegraphics[scale=0.14]{homepage.png} \url{https://nimahejazi.org}
 
 \vspace{2mm}
