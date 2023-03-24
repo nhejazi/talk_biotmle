@@ -1,4 +1,4 @@
-TITLE = 2022_edac_biotmle
+TITLE = 2023_b3d_biotmle
 
 all: $(TITLE).pdf notes clean
 minimal: $(TITLE).pdf clean

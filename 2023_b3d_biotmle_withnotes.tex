@@ -2,8 +2,8 @@
 \usetheme{metropolis}
 
 % specifications for presenter mode
-\beamerdefaultoverlayspecification{<+->}
-\setbeamercovered{transparent}
+%\beamerdefaultoverlayspecification{<+->}
+%\setbeamercovered{transparent}
 
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
@@ -103,8 +103,8 @@
           \href{https://github.com/nhejazi}{nhejazi} \\
         \includegraphics[scale=0.12]{homepage.png}
           \href{https://nimahejazi.org}{nimahejazi.org} \\
-     Biomedical AI Seminar,\\
-     University of Edinburgh\\
+     B3D Big Data Seminar,\\
+     Harvard T.H.~Chan School of Public Health\\
      \textit{Joint work with A.~Hubbard, M.~van der Laan, P.~Boileau}
     \end{minipage}%
     \begin{minipage}{0.3\textwidth}
@@ -115,7 +115,7 @@
   \end{figure}
 }
 
-\date{04 November 2022}
+\date{27 March 2023}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -273,10 +273,11 @@
   \item The linear model is \textit{semiparametric} --- linear in parameters!
   \item Flexible: transformations ($X_j^2$), interactions ($X_j X_k$).
   \item For biomarker $Y_b$, fit \textit{working} linear model,
-    $\mathbb{E}_0[Y_b \mid X] = X \beta$, letting (wlog) $X_1 \equiv A$ be the
-    exposure and $\beta_1$ its ``effect''.
-  \item Under this working model, the parameter $\beta_1$ is the ATE, but
-    \textit{only if} there are no interactions (i.e., without flexibility).
+    $\mathbb{E}_0[Y_b \mid \mathbf{X}] = \mathbf{X} \beta$; if $X_1 \equiv A$
+      is the exposure, then $\beta_1$ is its ``effect'' on $Y$.
+  \item Under this working model, $\beta_1$ is a \textit{conditional} effect
+    measure, whose interpretation depends on $\mathbf{X} \setminus X_1$, and
+    which coincides with the ATE only under randomization.
   \item Test the contrast of interest with a standard t-test:
     $$ t_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{\hat{\sigma}_b} $$
 \end{itemize}
@@ -301,7 +302,8 @@
 \begin{itemize}
   \itemsep6pt
   \item When sample size is small, $\sigma^2_b$ may be so small (by chance) that
-    even small effects ($\hat{\beta}_{b} - \beta_{b, H_0}$) give large $t_b$.
+    even small effect sizes ($\hat{\beta}_{b} - \beta_{b, H_0}$) yield large
+    $t_b$.
   \item False positives! Many biomarkers flagged relevant despite small effect
     size, only since variance is even smaller still.
   \item Can we do better? A \textbf{moderated} t-test~\citep{smyth2004linear}:
@@ -335,12 +337,12 @@
 \begin{itemize}
   \itemsep6pt
   \item If the working model is incorrect, $\beta_b$ does not correspond to the
-    ATE --- results polluted by \textit{misspecification bias}.
-  \item The statistical functional identifying the ATE may be used as an
-    interpretable variable importance measure (VIM):
+    ATE --- conclusions vulnerable \textit{misspecification bias}.
+  \item The statistical functional identifying the ATE, an interpretable
+    variable importance measure, may be used as the estimand:
     $$ \psi_{b,0} \equiv \Psi_b(P_0) = \mathbb{E}_{L,0}[\mathbb{E}_0[Y_b \mid
     A = 1, L] - \mathbb{E}_0[Y_b \mid A = 0, L]] $$
-  \item $\psi_{b,0}$ is a mapping ($\Psi_b(P_0)$) that depends on the underlying
+  \item $\psi_{b,0}$ is a mapping, $\Psi_b(P_0)$, that depends on the underlying
     true (but unknown) distribution $P_0 \in \mathcal{M}$ --- model-agnostic!
   \item The statistical functional \textit{identifies} the ATE under untestable
     assumptions (no unmeasured confounding, positivity).
@@ -367,16 +369,16 @@
     $$ \hat{\psi}_b - \psi_{b,0} = \frac{1}{n} \sum_{i = 1}^{n}
       D_b(O_i; P_0) + o_P\left(\frac{1}{\sqrt{n}}\right), $$
       where $D_b(O; P_0)$ is the efficient influence function (wrt
-      $\mathcal{M}$), whose asymptotic variance is the \textit{efficiency
-      bound}.
-  \item $D_b(O; P_0)$ helps construct efficient estimators. For ATE,
+      $\mathcal{M}$), whose asymptotic variance at $P_0$ is the
+      \textit{efficiency bound}.
+  \item $D_b(O; P_0)$ helpful to construct efficient estimators. For ATE,
     \begin{align*}
       D_b (O_i; P_0) =& \left[\frac{2A_i - 1}{g_0(L_i)} \right] (Y_{b, i} -
-      \overline{Q}_{0,b}(A_i, L_i))\\ &+ \overline{Q}_{0,b}(1, L_i)
-      - \overline{Q}_{0,b}(0, L_i) - \psi_{b, 0},
+      \overline{Q}_{0,b}(A_i, L_i)) + \\ &[\overline{Q}_{0,b}(1, L_i)
+      - \overline{Q}_{0,b}(0, L_i)] - \psi_{b, 0},
     \end{align*}
     where $g_0(L) = \mathbb{P}_0(A = 1 \mid L)$ is the ``propensity score''
-    and $\overline{Q}_{0,b}(A,L) = \mathbb{E}_0[Y_b \mid A, L]$ is conditional
+    and $\overline{Q}_{0,b}(A,L) = \mathbb{E}_0[Y_b \mid A, L]$ the conditional
     outcome mean.
 \end{itemize}
 \end{center}
@@ -402,12 +404,12 @@
   \item Instead, machine learning to estimate $g_0(L)$ and
     $\overline{Q}_{0,b}(A,L)$, e.g., by ensemble
     modeling~\citep{vdl2007super}.
-  \item One-step estimator~\citep{bickel1993efficient} ``debiased'' by an
-     additive correction: $\hat{\psi}_{b}^{+} = \hat{\psi}_{b} + n^{-1}
+  \item One-step estimator~\citep{bickel1993efficient} uses ``debiasing'' based
+    on an additive correction: $\hat{\psi}_{b}^{+} = \hat{\psi}_{b} + n^{-1}
      \sum_{i=1}^n \hat{D}_b(O_i)$.
   \item A valid variance estimator: $\hat{\mathbb{V}}(\hat{\psi}_b^{+}) =
-    n^{-1} \sum_{i=1}^n \hat{D}_b^2(O_i)$, but small-sample behavior may be
-    erratic.
+    n^{-1} \sum_{i=1}^n \hat{D}_b^2(O_i)$, but its small-sample behavior may be
+    erratic (asymptotically valid).
 \end{itemize}
 \end{center}
 
@@ -428,7 +430,8 @@
   \item Moderated t-statistic of~\cite{smyth2004linear} naturally extends to
     locally efficient estimators by noticing
     \begin{equation*}
-      \tilde{t}_b = \frac{\hat{\psi}_b^{+} - \cancel{\psi_{b,0}}{~0}}
+      \tilde{t}_b = \frac{\hat{\psi}_b^{+} - \cancel{\psi_{b,0}}{~^{
+      \scriptstyle H_0:~\psi_{b,0} = 0}}}
       {\tilde{\sigma}_b},
     \end{equation*}
     where the \textit{moderated} influence function variance is
@@ -465,15 +468,16 @@
 \begin{itemize}
   \itemsep6pt
   \item Apply a filtering procedure to reduce the set of candidate
-    biomarkers~\citep{tuglus2009modified} (optional).
+    biomarkers~\citep{tuglus2009modified} \textit{optionally}.
    \item For each biomarker, generate an efficient estimate of $\hat{\psi}_b$ of
     $\psi_{0,b}$ with EIF $\hat{D}_b(O_i)$ by estimating nuisances $(g_0,
     \overline{Q}_{0,b})$.
   \item Apply variance moderation across the EIF estimates, yielding
-    \textit{moderated} $\tilde{\sigma}_b^2$, to be used for hypothesis testing.
-  \item Various techniques for inference are possible based on the moderated
-    test statistics -- taking advantage of near-normality, standardized logistic
-    or concentration inequalities.
+    \textit{moderated} $\tilde{\sigma}_b^2$, to be used for ``stabilized''
+    hypothesis testing.
+  \item Inferential techniques based on moderated test statistics can be
+    optimistic (near-normality) or conservative (standardized logistic,
+    concentration inequalities).
   \item Apply a multiple testing correction for accurate simultaneous inference
     inference across all $B$ biomarkers, e.g., by controlling the False
     Discovery Rate~\citep{benjamini1995controlling}.
@@ -530,7 +534,7 @@
     challenging-to-verify modeling assumptions.
   \item \textit{Model misspecification} seriously undermines the scientific
     utility of common, classical statistical modeling approaches.
-  \item Non/semi-parametric inference facilitates constructing robust estimators
+  \item Non-/semi-parametric inference allows constructing robust estimators
     that easily bring machine learning into the fold.
   \item Variance moderation strengthens hypothesis testing strategies, reducing
     false positives and preserving power under instability.
@@ -569,6 +573,14 @@
 \vspace{2mm}
 \includegraphics[scale=0.14]{twitter-icon.png}
   \url{https://twitter.com/nshejazi}
+
+\vspace{2mm}
+\includegraphics[scale=0.14]{pdf-icon.png}
+  \url{https://doi.org/10.1177/09622802221146313}
+
+\vspace{2mm}
+\includegraphics[scale=0.14]{pdf-icon.png}
+  \url{https://arxiv.org/abs/1710.05451}
 
 \note{Here's where you can find me, as well as the slides for this talk.}
 
