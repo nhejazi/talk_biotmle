@@ -82,11 +82,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % title info
-\title{\normalsize Combining Causal Inference and Machine Learning for
-  Model-Agnostic Discovery in High-Dimensional Biology}
-
-%\subtitle{\scriptsize Nonparametric variable importance, supervised clustering,
-  %\\[-10pt]}
+\title{\normalsize Using causal inference and machine learning tools for
+  biomarker discovery in high-dimensional biology settings}
 
 \author{\href{https://nimahejazi.org}{Nima Hejazi}\\[-10pt]}
 
@@ -103,8 +100,8 @@
           \href{https://github.com/nhejazi}{nhejazi} \\
         \includegraphics[scale=0.12]{homepage.png}
           \href{https://nimahejazi.org}{nimahejazi.org} \\
-     B3D Big Data Seminar,\\
-     Harvard T.H.~Chan School of Public Health\\
+     Precision Medicine Symposium\\
+     Steno Diabetes Center Aarhus\\
      \textit{Joint work with A.~Hubbard, M.~van der Laan, P.~Boileau}
     \end{minipage}%
     \begin{minipage}{0.3\textwidth}
@@ -115,7 +112,7 @@
   \end{figure}
 }
 
-\date{27 March 2023}
+\date{31 May 2024}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -133,13 +130,13 @@
 \begin{center}
 \begin{enumerate}
   \itemsep6pt
-  \item Modern computational biology research produces complex, heterogeneous
-    data --- innovative statistical inference still tied to simplistic and
-    challenging-to-verify modeling assumptions.
-  \item \textit{Model misspecification} seriously undermines the scientific
-    utility of common, classical statistical modeling approaches.
-  \item Non/semi-parametric inference facilitates constructing robust estimators
-    that easily bring machine learning into the fold.
+  \item Computational biology research produces complex data, but statistical
+    methods are tied to modeling assumptions challenging to verify from
+    substantive knowledge.
+  \item \textit{Model misspecification} can seriously undermine the scientific
+    value of common, parametric statistical modeling approaches.
+  \item Semi-parametric inference facilitates construction of robust estimators
+    that are compatible with machine learning.
   \item Variance moderation strengthens hypothesis testing strategies, reducing
     false positives and preserving power under instability.
 \end{enumerate}
@@ -156,8 +153,8 @@
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item \textit{Question}: What factors are associated (``causally'' perhaps)
-    with a health outcome of interest (e.g., cancer, death).
+  \item \textit{Question}: What factors causally impact a health outcome of
+    interest (e.g., cancer, death).
   \item \textit{Experiment}: Assign\textsuperscript{?} patients to novel therapy
     vs.~standard of care (or exposure) and then evaluate outcome's occurrence.
   \item \textit{Goal}: Deepen \underline{mechanistic} insights --- how does the
@@ -173,39 +170,18 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Let's meet the data: Benzene exposure and miRNA}
-\begin{center}
-\begin{itemize}
-  \itemsep6pt
-  \item \textit{Question}: Which miRNA (non-coding regulators) are affected by
-    a target occupational exposure (benzene)?
-  \item \textit{Why?} Attempt to decipher how patterns of miRNA disregulation
-    may impact subsequent disease states.
-  \item \textit{Study}: Cohort study of occupational exposure to benzene with
-    $125$ individuals and $22$K candidate miRNA assayed.
-  \item \textit{Goal}: Characterize biological mechanisms or signatures derived
-    from or attributable to exposure.
-\end{itemize}
-\end{center}
-
-\note{
-}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}[c]{Let's meet the data: Smoking and DNA methylation}
+\begin{frame}[c]{Meet the data: Smoking and DNA methylation}
 \begin{center}
 \begin{itemize}
   \itemsep6pt
   \item \textit{Question}: Which CpG sites, or larger functional units (e.g.,
-    ``CpG islands''), are affected by long-term smoking?
+    ``CpG islands'') are affected by long-term smoking?
   \item \textit{Why?} Attempt to understand how smoking induces regulatory and
     functional changes that relate to disease (e.g., cancer).
-  \item \textit{Study}: Observational exposure study of $253$ individuals (with
-    $172$ smokers, $81$ non-smokers) and $\approx 450$K CpG sites assayed.
-  \item \textit{Goal}: Characterize biological mechanisms or signatures derived
-    from or attributable to exposure.
+  \item \textit{Study}: Observational exposure study of $253$ individuals (172
+    smokers, 81 non-smokers) and 450,000 CpG sites assayed.
+  \item \textit{Goal}: Characterize biological mechanisms, signatures, or
+    biomarkers derived from or attributable to smoking.
 \end{itemize}
 \end{center}
 
@@ -219,15 +195,15 @@
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item Consider a structural causal model (SCM)~\citep{pearl2000causality} to
-    describe how data on a single unit $O$ was generated:
+  \item Structural causal model (SCM)~\citep{pearl2000causality} describing
+    data-generating process for a single unit $O$:
     \begin{equation*}\label{npsem}
         L = f_L(U_L); A = f_A(L, U_A); Y = f_Y(A, L, U_Y).
       \end{equation*}
   \item $f_L$, $f_A$, $f_Y$ are unknown but deterministic functions; $U_L$,
     $U_A$, $U_Y$ are exogenous (unobserved) random errors.
   \item $Y = (Y_b: b = 1, \ldots B)$ is a vector of biomarker outcomes (e.g.,
-    $B = 22$K for miRNA, $B = 450$K for CpG sites).
+    $B = 450,000$ CpG sites).
   \item Temporal ordering between variables: $L$ (sex-at-birth, age), $A$
     (smoking, benzene), $Y_b$ (biomarker measurement for site $b$).
   \item Data on a single study unit $O = (L, A, Y)$, with $O \sim P_0 \in
@@ -246,20 +222,21 @@
 \begin{itemize}
   \itemsep6pt
   \item \textit{Static} interventions consider replacing $f_A$ with an assigned
-    value $a \in \mathcal{A}$ deterministically. ``What if everyone smoked?''
-  \item Generates ``counterfactual'' RV $Y(a) = (Y_b(a), b: 1, \ldots B)$: the
+    value $a \in \mathcal{A}$ deterministically: ``What if everyone smoked?''
+  \item Generates counterfactual RV $Y(a) = (Y_b(a), b: 1, \ldots B)$: the
     expression of the $B$ biomarkers if $A$ had been set to $a$.
   \item Viewed as \textit{potential outcomes} (POs)~\citep{rubin2005causal},
     $Y_b(1)$ when setting $A=1$ and $Y_b(0)$ when setting $A = 0$.
-  \item Note that $Y_b = A Y_b(1) + (1 - A) Y_b(0)$ --- only partially seeing
-    the POs is the \textit{fundamental problem of causal inference}.
+  \item Note $Y_b = A Y_b(1) + (1 - A) Y_b(0)$ --- partial visibility is the
+    \textit{fundamental problem of causal
+    inference}~\citep{holland1986statistics}.
   \item Causal inference yields interpretable, scientifically well-aligned
     estimands, e.g., the average treatment effect (ATE).
 \end{itemize}
 \end{center}
 
 \note{Statistical parameter may be viewed as a simple adjusted difference in
-  means even when identifiability conditions appear unsatisfiable.
+  means even when identifiability conditions may not be satisfied.
 }
 \end{frame}
 
@@ -270,11 +247,11 @@
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item The linear model is \textit{semiparametric} --- linear in parameters!
+  \item The linear model is \textit{flexible} --- linearity in parameters!
   \item Flexible: transformations ($X_j^2$), interactions ($X_j X_k$).
   \item For biomarker $Y_b$, fit \textit{working} linear model,
     $\mathbb{E}_0[Y_b \mid \mathbf{X}] = \mathbf{X} \beta$; if $X_1 \equiv A$
-      is the exposure, then $\beta_1$ is its ``effect'' on $Y$.
+      is the exposure, then $\beta_1$ measures its impact on $Y$.
   \item Under this working model, $\beta_1$ is a \textit{conditional} effect
     measure, whose interpretation depends on $\mathbf{X} \setminus X_1$, and
     which coincides with the ATE only under randomization.
@@ -336,16 +313,20 @@
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item If the working model is incorrect, $\beta_b$ does not correspond to the
-    ATE --- conclusions vulnerable \textit{misspecification bias}.
-  \item The statistical functional identifying the ATE, an interpretable
-    variable importance measure, may be used as the estimand:
-    $$ \psi_{b,0} \equiv \Psi_b(P_0) = \mathbb{E}_{L,0}[\mathbb{E}_0[Y_b \mid
-    A = 1, L] - \mathbb{E}_0[Y_b \mid A = 0, L]] $$
+  %\item If the working model is incorrect, $\beta_b$ does not correspond to the
+    %ATE $\theta^{\text{ATE}}$ --- \textit{identification bias}.
+  \item The statistical functional identifying the ATE ($\psi_{b,0}$) may be
+    used as an estimand to assess variable importance:
+    \begin{align*}
+      \theta^{\text{ATE}} &= \mathbb{E}[Y_b(1) - Y_b(0)] \\
+      \psi_{b,0} \coloneqq \Psi_b(P_0) &= \mathbb{E}_{L,0}[\mathbb{E}_0[Y_b
+        \mid A = 1, L] - \mathbb{E}_0[Y_b \mid A = 0, L]]
+    \end{align*}
   \item $\psi_{b,0}$ is a mapping, $\Psi_b(P_0)$, that depends on the underlying
     true (but unknown) distribution $P_0 \in \mathcal{M}$ --- model-agnostic!
-  \item The statistical functional \textit{identifies} the ATE under untestable
-    assumptions (no unmeasured confounding, positivity).
+  \item The causal parameter $\theta^{\text{ATE}}$ is identified by the
+    statistical functional $\psi_{b,0}$ under some assumptions (no unmeasured
+    confounding, positivity), i.e., $\theta^{\text{ATE}} \equiv \psi_{b,0}$.
 \end{itemize}
 \end{center}
 
@@ -377,7 +358,7 @@
       \overline{Q}_{0,b}(A_i, L_i)) + \\ &[\overline{Q}_{0,b}(1, L_i)
       - \overline{Q}_{0,b}(0, L_i)] - \psi_{b, 0},
     \end{align*}
-    where $g_0(L) = \mathbb{P}_0(A = 1 \mid L)$ is the ``propensity score''
+    where $g_0(L) = \mathbb{P}_0(A = 1 \mid L)$ is the propensity score
     and $\overline{Q}_{0,b}(A,L) = \mathbb{E}_0[Y_b \mid A, L]$ the conditional
     outcome mean.
 \end{itemize}
@@ -398,12 +379,11 @@
 \begin{itemize}
   \itemsep6pt
   \item Examining $D_b(O; P_0)$, we know we must estimate $g_0(L)$ and
-    $\overline{Q}_{0,b}(A,L)$, but how exactly we do this is unspecified.
+    $\overline{Q}_{0,b}(A,L)$, but how to do this?
   \item No need to try to exactly specify functional forms or assume we know the
     underlying true data-generating distribution $P_0$.
-  \item Instead, machine learning to estimate $g_0(L)$ and
-    $\overline{Q}_{0,b}(A,L)$, e.g., by ensemble
-    modeling~\citep{vdl2007super}.
+  \item Machine learning of $g_0(L)$ and $\overline{Q}_{0,b}(A,L)$, e.g., by
+    ensembling, stacking~\citep{vdl2007super, breiman1996stacked}.
   \item One-step estimator~\citep{bickel1993efficient} uses ``debiasing'' based
     on an additive correction: $\hat{\psi}_{b}^{+} = \hat{\psi}_{b} + n^{-1}
      \sum_{i=1}^n \hat{D}_b(O_i)$.
@@ -427,14 +407,14 @@
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item Moderated t-statistic of~\cite{smyth2004linear} naturally extends to
-    locally efficient estimators by noticing
+  \item Moderated t-statistic of~\cite{smyth2004linear} can be paired with
+    locally efficient estimators:
     \begin{equation*}
       \tilde{t}_b = \frac{\hat{\psi}_b^{+} - \cancel{\psi_{b,0}}{~^{
       \scriptstyle H_0:~\psi_{b,0} = 0}}}
       {\tilde{\sigma}_b},
     \end{equation*}
-    where the \textit{moderated} influence function variance is
+    where the \textit{moderated} (influence function) variance is
     \begin{equation*}
       \tilde{\sigma}^2_b = \frac{\hat{\sigma}^2_b d_b + \hat{\sigma}^2_0 d_0}
       {d_b + d_0}
@@ -451,10 +431,54 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c,noframenumbering,plain]{Let's take a look: Numerical study}
+\begin{frame}[c,noframenumbering,plain]{Numerical study: Rare effect (10\%)
+without positivity issues}
 
 \centering
 \includegraphics[origin=c,scale=0.205]{fdr_sl_findings_min_logistic_g0prob_no}
+
+\note{
+Setting: strong exposure effect in 10\% of biomarkers and no positivity issues
+in the exposure mechanism.
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c,noframenumbering,plain]{Numerical study: Common effect (30\%)
+with positivity issues}
+
+\centering
+\includegraphics[origin=c,scale=0.205]{fdr_sl_findings_mod_logistic_g0prob_yes}
+
+\note{
+Setting: strong exposure effect in 30\% of biomarkers and notable positivity
+issues in the exposure mechanism.
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[c]{Differential expression analysis procedure}
+
+\begin{center}
+\begin{enumerate}
+  \itemsep6pt
+  \item Apply a filtering procedure to reduce the set of candidate
+    biomarkers~\citep{tuglus2009modified} \textit{optionally}.
+   \item For each biomarker, generate an efficient estimate $\hat{\psi}_b$ of
+    $\psi_{0,b}$ with EIF $\hat{D}_b(O_i)$ after estimating nuisances $(g_0,
+    \overline{Q}_{0,b})$.
+  \item Apply variance moderation across the EIF estimates, yielding
+    \textit{moderated} $\tilde{\sigma}_b^2$, to be used for stabilized
+    hypothesis testing.
+  \item Hypothesis testing from moderated test statistics can be made
+    ``optimistic'' (MVN) or conservative (logistic).
+  \item Apply a multiple testing correction for accurate simultaneous inference
+    across all $B$ biomarkers, e.g., by controlling the False
+    Discovery Rate~\citep{benjamini1995controlling}.
+\end{enumerate}
+\end{center}
 
 \note{
 }
@@ -462,26 +486,25 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Differential expression analysis algorithm}
+\begin{frame}[c]{Applying the differential expression procedure}
 
 \begin{center}
-\begin{itemize}
+\begin{enumerate}
   \itemsep6pt
-  \item Apply a filtering procedure to reduce the set of candidate
-    biomarkers~\citep{tuglus2009modified} \textit{optionally}.
-   \item For each biomarker, generate an efficient estimate of $\hat{\psi}_b$ of
-    $\psi_{0,b}$ with EIF $\hat{D}_b(O_i)$ by estimating nuisances $(g_0,
-    \overline{Q}_{0,b})$.
-  \item Apply variance moderation across the EIF estimates, yielding
-    \textit{moderated} $\tilde{\sigma}_b^2$, to be used for ``stabilized''
-    hypothesis testing.
-  \item Inferential techniques based on moderated test statistics can be
-    optimistic (near-normality) or conservative (standardized logistic,
-    concentration inequalities).
-  \item Apply a multiple testing correction for accurate simultaneous inference
-    inference across all $B$ biomarkers, e.g., by controlling the False
-    Discovery Rate~\citep{benjamini1995controlling}.
-\end{itemize}
+  \item Filtered set of 450,000 CpG sites measured down to 2537 CpG sites by
+    covariate adjustment in a working linear model.
+   \item For each candidate CpG (among 2537), estimate $(g_0,
+     \overline{Q}_{0,b})$ by super (ensemble) learning, then construct efficient
+     estimate $\hat{\psi}_b$ of ATE from the EIF $\hat{D}_b(g_n,
+     \overline{Q}_{n,b})$.
+  \item Variance moderation based on estimated EIF, yielding \textit{moderated}
+    $\tilde{\sigma}_b^2$, for stabilized hypothesis testing across CpGs.
+  \item Applied Holm's procedure to control the family-wise error rate (FWER),
+    tagging 1173 CpG sites as differentially methylated.
+  \item Top CpG sites (cg05575921) located in AHRR gene, previously identified
+    in at least 30 epigenome-wide association studies on impact of smoking
+    exposure on blood and lung tissues.
+\end{enumerate}
 \end{center}
 
 \note{
@@ -501,15 +524,16 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Open-source software: \texttt{R/biotmle}!}
+\begin{frame}[c]{Open-source software: \texttt{R/biotmle}}
 
 \begin{center}
 \begin{itemize}
   \itemsep6pt
   \item \texttt{R} package for differential expression or methylation analysis
-     based on model-agnostic, efficient estimators of the ATE.
+     based on \textit{model-agnostic}, efficient estimators of the ATE.
   \item Incorporates machine learning and allows cross-validation.
-  \item Statistical inference based on variance \textit{moderation}.
+  \item Statistical inference based on semi-parametric efficiency theory
+    \textit{and} variance moderation.
   \item Where can you find it?
     \begin{itemize}
       \itemsep4pt
@@ -529,13 +553,13 @@
 \begin{center}
 \begin{enumerate}
   \itemsep6pt
-  \item Modern computational biology research produces complex, heterogeneous
-    data --- innovative statistical inference still tied to simplistic and
-    challenging-to-verify modeling assumptions.
-  \item \textit{Model misspecification} seriously undermines the scientific
-    utility of common, classical statistical modeling approaches.
-  \item Non-/semi-parametric inference allows constructing robust estimators
-    that easily bring machine learning into the fold.
+  \item Computational biology research produces complex data ---
+    why should statistical inference be tied to challenging-to-verify modeling
+    assumptions?
+  \item \textit{Model misspecification} seriously undermines scientific
+    value of common, parametric statistical modeling approaches.
+  \item Semi-parametric inference allows the construction of robust estimators
+    that readily bring machine learning into the process.
   \item Variance moderation strengthens hypothesis testing strategies, reducing
     false positives and preserving power under instability.
 \end{enumerate}

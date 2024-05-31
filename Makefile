@@ -1,7 +1,7 @@
-TITLE = 2023_b3d_biotmle
+TITLE = 2024_steno_biotmle
 
-all: $(TITLE).pdf notes clean
 minimal: $(TITLE).pdf clean
+all: $(TITLE).pdf notes clean web
 
 $(TITLE).pdf: $(TITLE).tex header.tex
 	xelatex $(TITLE)
