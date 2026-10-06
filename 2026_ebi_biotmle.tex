@@ -133,8 +133,8 @@
 \begin{enumerate}
   \itemsep6pt
   \item Computational biology research produces complex data, but statistical
-    methods are tied to modeling assumptions challenging to verify from
-    substantive knowledge.
+    methods are often tied to modeling assumptions that are challenging to
+    verify from subject matter knowledge.
   \item \textit{Model misspecification} can seriously undermine the scientific
     value of common, parametric statistical modeling approaches.
   \item Semi-parametric inference facilitates construction of robust estimators
@@ -151,17 +151,17 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{A common problem}
+\begin{frame}[c]{Sketching a common problem}
 \begin{center}
 \begin{itemize}
   \itemsep6pt
   \item \textit{Question}: What factors causally impact a health outcome of
     interest (e.g., cancer, death).
-  \item \textit{Experiment}: Assign\textsuperscript{?} patients to novel therapy
-    vs.~standard of care (or exposure) and then evaluate outcome's occurrence.
-  \item \textit{Goal}: Deepen \underline{mechanistic} insights --- how does the
-    therapy or exposure biologically operate? Identify intervention points.
-  \item Combine tools from $\star$-omics and molecular biology, clinical trials,
+  \item \textit{Experiment}: Assign\textsuperscript{?} study units to
+    investigational therapy vs.~standard of care and evaluate outcome risk.
+  \item \textit{Goal}: Deepen \underline{mechanistic} insights---how does the
+    therapy (or exposure) biologically operate? Identify intervention points.
+  \item Draw on tools from -omics and molecular biology, clinical trials,
     causal inference, (bio)statistics, epidemiology.
 \end{itemize}
 \end{center}
@@ -177,11 +177,11 @@
 \begin{itemize}
   \itemsep6pt
   \item \textit{Question}: Which CpG sites, or larger functional units (e.g.,
-    ``CpG islands'') are affected by long-term smoking?
+    CpG islands) are affected by long-term smoking?
   \item \textit{Why?} Attempt to understand how smoking induces regulatory and
     functional changes that relate to disease (e.g., cancer).
   \item \textit{Study}: Observational exposure study of $253$ individuals (172
-    smokers, 81 non-smokers) and 450,000 CpG sites assayed.
+    smokers, 81 non-smokers) with 450,000 CpG sites assayed.
   \item \textit{Goal}: Characterize biological mechanisms, signatures, or
     biomarkers derived from or attributable to smoking.
 \end{itemize}
@@ -197,19 +197,21 @@
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item Structural causal model (SCM)~\citep{pearl2000causality} describing
-    data-generating process for a single unit $O$:
+  \item Consider a structural causal model~\citep{pearl2000causality} that
+    describes the data-generating process for a single unit $O$:
     \begin{equation*}\label{npsem}
         L = f_L(U_L); A = f_A(L, U_A); Y = f_Y(A, L, U_Y).
       \end{equation*}
-  \item $f_L$, $f_A$, $f_Y$ are unknown but deterministic functions; $U_L$,
-    $U_A$, $U_Y$ are exogenous (unobserved) random errors.
-  \item $Y = (Y_b: b = 1, \ldots, B)$ is a vector of biomarker outcomes (e.g.,
-    $B = 450,000$ CpG sites).
+  \item $f_L$, $f_A$, $f_Y$ are unknown, deterministic functions; $U_L$, $U_A$,
+    $U_Y$ are exogenous, unobserved errors, assumed $U_L \indep U_A \indep
+    U_Y$.
+  \item $Y = (Y_b: b = 1, \ldots, B)$ is a vector of biomarker outcomes, where
+    we have, e.g., $B = 450,000$ CpG sites.
   \item Temporal ordering between variables: $L$ (sex-at-birth, age), $A$
-    (smoking, benzene), $Y_b$ (biomarker measurement for site $b$).
-  \item Data on a single study unit $O = (L, A, Y)$, with $O \sim P_0 \in
-    \mathcal{M}$, of which we observe $n$ i.i.d.~copies, $O_1, \ldots, O_n$.
+    (smoking), $Y_b$ (outcome at CpG site $b$).
+  \item Data on a single study unit $O = (L, A, Y)$, with $O \sim \mathsf{P}_0
+    \in \mathcal{P}$, of which we observe $n$ i.i.d.~copies, $O_1, \ldots,
+    O_n$.
 \end{itemize}
 \end{center}
 
@@ -229,7 +231,7 @@
     expression of the $B$ biomarkers if $A$ had been set to $a$.
   \item Viewed as \textit{potential outcomes} (POs)~\citep{rubin2005causal},
     $Y_b(1)$ when setting $A=1$ and $Y_b(0)$ when setting $A = 0$.
-  \item Note $Y_b = A Y_b(1) + (1 - A) Y_b(0)$ --- partial visibility is the
+  \item Note $Y_b = A Y_b(1) + (1 - A) Y_b(0)$, this partial visibility is the
     \textit{fundamental problem of causal
     inference}~\citep{holland1986statistics}.
   \item Causal inference yields interpretable, scientifically well-aligned
@@ -249,8 +251,8 @@
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item The linear model is \textit{flexible} --- linearity in parameters!
-  \item Flexible: transformations ($X_j^2$), interactions ($X_j X_k$).
+  \item The linear model is \textit{flexible}? Linear in parameters!
+  \item Flexibility: transformations ($X_j^2$), interactions ($X_j X_k$).
   \item For biomarker $Y_b$, fit \textit{working} linear model,
     $\mathbb{E}_0[Y_b \mid \mathbf{X}] = \mathbf{X} \beta$; if $X_1 \equiv A$
       is the exposure, then $\beta_1$ measures its impact on $Y$.
@@ -268,8 +270,8 @@
       linear model; (2) we end up with unstable variance estimates that sharply
       increase the number of false positives detected, even after multiple
       testing corrections. In practice, the incredible flexibility of the linear
-      mode is rarely taken advantage of --- scientific guidance is usually
-      lacking to justify the fitting of richer models.
+      mode is rarely taken advantage of---scientific guidance is usually
+      lacking to justify fitting richer models.
 }
 \end{frame}
 
@@ -280,16 +282,17 @@
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item When sample size is small, $\hat{\sigma}^2_b$ may be so small (by chance) that
-    even small effect sizes ($\hat{\beta}_{b} - \beta_{b, H_0}$) yield large
-    $t_b$.
+  \item When sample size is small, $\hat{\sigma}^2_b$ may be so small (by
+    chance) that even small effect sizes ($\hat{\beta}_{b} - \beta_{b, H_0}$)
+    yield large $t_b$.
   \item False positives! Many biomarkers flagged relevant despite small effect
     size, only since variance is even smaller still.
   \item Can we do better? A \textbf{moderated} t-test~\citep{smyth2004linear}:
     $$
       \tilde{t}_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{\tilde{\sigma}_b}
       \quad \text{where} \quad
-      \tilde{\sigma}^2_b = \frac{\hat{\sigma}^2_b d_b + \hat{\sigma}^2_0 d_0}{d_b + d_0}
+      \tilde{\sigma}^2_b = \frac{\hat{\sigma}^2_b d_b + \hat{\sigma}^2_0
+        d_0}{d_b + d_0}
     $$
   \item Helps reduce erroneously large $t_b$ by ``averaging out'' low variance
     across each of the many biomarkers.
@@ -297,7 +300,7 @@
 \end{center}
 
 \note{The substantive contribution here is the use of an empirical Bayes method
-      to shrink the standard deviation across all of the biomarkers such that we
+      to shrink the standard deviation across all the biomarkers such that we
       obtain a larger (but accurate) estimate that reduces the number of test
       statistics that are marked as significant by low $s^2_b$ estimates alone.
 
@@ -310,7 +313,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Variable importance measures as target parameters!}
+\begin{frame}[c]{Variable importance measures as target parameters}
 
 \begin{center}
 \begin{itemize}
@@ -321,11 +324,13 @@
     used as an estimand to assess variable importance:
     \begin{align*}
       \theta^{\text{ATE}} &= \mathbb{E}[Y_b(1) - Y_b(0)] \\
-      \psi_{b,0} \coloneqq \Psi_b(P_0) &= \mathbb{E}_{L,0}[\mathbb{E}_0[Y_b
-        \mid A = 1, L] - \mathbb{E}_0[Y_b \mid A = 0, L]]
+      \psi_{b,0} \coloneqq \Psi_b(\mathsf{P}_0) &=
+        \mathbb{E}_{L,0}\{\mathbb{E}_0[Y_b \mid A = 1, L] -
+        \mathbb{E}_0[Y_b \mid A = 0, L]\}
     \end{align*}
-  \item $\psi_{b,0}$ is a mapping, $\Psi_b(P_0)$, that depends on the underlying
-    true (but unknown) distribution $P_0 \in \mathcal{M}$ --- model-agnostic!
+  \item $\psi_{b,0}$ is a mapping, $\Psi_b(\mathsf{P}_0)$, that depends on the
+    underlying true (but unknown) distribution $\mathsf{P}_0 \in \mathcal{P}$
+    (model-agnostic!)
   \item The causal parameter $\theta^{\text{ATE}}$ is identified by the
     statistical functional $\psi_{b,0}$ under some assumptions (no unmeasured
     confounding, positivity), i.e., $\theta^{\text{ATE}} \equiv \psi_{b,0}$.
@@ -347,18 +352,20 @@
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item An estimator $\hat{\psi}_b$ is asymptotically linear if it admits the
-    form
-    $$ \hat{\psi}_b - \psi_{b,0} = \frac{1}{n} \sum_{i = 1}^{n}
-      D_b(O_i; P_0) + o_P\left(\frac{1}{\sqrt{n}}\right), $$
+  \item An estimator $\hat{\psi}_b$ is \textit{asymptotically linear} if it
+    admits the form
+    $$ \sqrt{n}(\hat{\psi}_b - \psi_{b,0}) = \frac{1}{\sqrt{n}}
+      \sum_{i = 1}^{n} D_b(O_i; \mathsf{P}_0) + o_{\mathsf{P}}(1) \ , $$
       where $D_b(O; P_0)$ is the efficient influence function (wrt
-      $\mathcal{M}$), whose asymptotic variance at $P_0$ is the
+      $\mathcal{P}$), whose asymptotic variance at $\mathsf{P}_0$ is the
       \textit{efficiency bound}.
-  \item $D_b(O; P_0)$ helpful to construct efficient estimators. For ATE,
+  \item $D_b(O; \mathsf{P}_0)$ helpful to construct efficient estimators. For
+    ATE,
     \begin{align*}
-      D_b (O_i; P_0) =& \left[\frac{2A_i - 1}{g_0(L_i)} \right] (Y_{b, i} -
-      \overline{Q}_{0,b}(A_i, L_i)) + \\ &[\overline{Q}_{0,b}(1, L_i)
-      - \overline{Q}_{0,b}(0, L_i)] - \psi_{b, 0},
+      D_b (O_i; \mathsf{P}_0) =& \left(\frac{2A_i - 1}{g_0(L_i)} \right)
+      [Y_{b, i} - \overline{Q}_{0,b}(A_i, L_i)] + \\ 
+      &[\overline{Q}_{0,b}(1, L_i) - \overline{Q}_{0,b}(0, L_i)] -
+      \psi_{b, 0} \ ,
     \end{align*}
     where $g_0(L) = \mathbb{P}_0(A = 1 \mid L)$ is the propensity score
     and $\overline{Q}_{0,b}(A,L) = \mathbb{E}_0[Y_b \mid A, L]$ the conditional
@@ -368,8 +375,8 @@
 
 \note{Natural use of machine learning methods for the estimation of both $Q_0$
       and $g_0$. Focuses effort to achieve minimal bias and asymptotic
-      semiparametric efficiency bound for the variance, but still get inference
-      (with some assumptions).
+      semi-parametric efficiency bound for the variance, but still get
+      inference (with some assumptions).
 }
 \end{frame}
 
@@ -380,15 +387,16 @@
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item Examining $D_b(O; P_0)$, we know we must estimate $g_0(L)$ and
+  \item Examining $D_b(O; \mathsf{P}_0)$, we know we must estimate $g_0(L)$ and
     $\overline{Q}_{0,b}(A,L)$, but how to do this?
   \item No need to try to exactly specify functional forms or assume we know the
-    underlying true data-generating distribution $P_0$.
+    underlying true data-generating distribution $\mathsf{P}_0$.
   \item Machine learning of $g_0(L)$ and $\overline{Q}_{0,b}(A,L)$, e.g., by
     ensembling, stacking~\citep{vdl2007super, breiman1996stacked}.
   \item One-step estimator~\citep{bickel1993efficient} uses ``debiasing'' based
-    on an additive correction: $\hat{\psi}_{b}^{+} = \hat{\psi}_{b} + n^{-1}
-     \sum_{i=1}^n \hat{D}_b(O_i)$.
+    on an additive correction:
+    $\hat{\psi}_{b}^{+} = \hat{\psi}_{b}^{\text{PI}} +
+    n^{-1} \sum_{i=1}^n \hat{D}_b(O_i)$.
   \item A valid variance estimator: $\hat{\mathbb{V}}(\hat{\psi}_b^{+}) =
     n^{-1} \sum_{i=1}^n \hat{D}_b^2(O_i)$, but its small-sample behavior may be
     erratic (asymptotically valid).
@@ -397,8 +405,8 @@
 
 \note{Natural use of machine learning methods for the estimation of both $Q_0$
       and $g_0$. Focuses effort to achieve minimal bias and asymptotic
-      semiparametric efficiency bound for the variance, but still get inference
-      (with some assumptions).
+      semi-parametric efficiency bound for the variance, but still get
+      inference (with some assumptions).
 }
 \end{frame}
 
@@ -503,9 +511,9 @@ issues in the exposure mechanism.
     $\tilde{\sigma}_b^2$, for stabilized hypothesis testing across CpGs.
   \item Applied Holm's procedure to control the family-wise error rate (FWER),
     tagging 1173 CpG sites as differentially methylated.
-  \item Top CpG site (cg05575921) located in the AHRR gene, previously identified
-    in at least 30 epigenome-wide association studies on impact of smoking
-    exposure on blood and lung tissues.
+  \item Top CpG site (cg05575921) lies in the AHRR gene, previously
+    identified in at least 30 epigenome-wide association studies on impact of
+    smoking exposure on blood and lung tissues.
 \end{enumerate}
 \end{center}
 
@@ -551,22 +559,22 @@ issues in the exposure mechanism.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Review}
+\begin{frame}[c,noframenumbering]{Review}
+\thispagestyle{empty}
 \begin{center}
 \begin{enumerate}
   \itemsep6pt
-  \item Computational biology research produces complex data ---
-    why should statistical inference be tied to challenging-to-verify modeling
-    assumptions?
-  \item \textit{Model misspecification} seriously undermines scientific
+  \item Computational biology research produces complex data, but statistical
+    methods are often tied to modeling assumptions that are challenging to
+    verify from subject matter knowledge.
+  \item \textit{Model misspecification} can seriously undermine the scientific
     value of common, parametric statistical modeling approaches.
-  \item Semi-parametric inference allows the construction of robust estimators
-    that readily bring machine learning into the process.
+  \item Semi-parametric inference facilitates construction of robust estimators
+    that are compatible with machine learning.
   \item Variance moderation strengthens hypothesis testing strategies, reducing
     false positives and preserving power under instability.
 \end{enumerate}
 \end{center}
-
 
 \note{It's always good to include a summary.}
 \end{frame}
@@ -588,25 +596,21 @@ issues in the exposure mechanism.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[c]{Thank you}
+\begin{frame}[c]{Thank you! Questions?}
 
 \includegraphics[scale=0.14]{homepage.png} \url{https://nimahejazi.org}
+
+\vspace{2mm}
+\includegraphics[scale=0.11]{github-icon.png}
+  \url{https://github.com/nshlab}
 
 \vspace{2mm}
 \includegraphics[scale=0.11]{github-icon.png}
   \url{https://github.com/nhejazi}
 
 \vspace{2mm}
-\includegraphics[scale=0.14]{twitter-icon.png}
-  \url{https://twitter.com/nshejazi}
-
-\vspace{2mm}
 \includegraphics[scale=0.14]{pdf-icon.png}
   \url{https://doi.org/10.1177/09622802221146313}
-
-\vspace{2mm}
-\includegraphics[scale=0.14]{pdf-icon.png}
-  \url{https://arxiv.org/abs/1710.05451}
 
 \note{Here's where you can find me, as well as the slides for this talk.}
 
