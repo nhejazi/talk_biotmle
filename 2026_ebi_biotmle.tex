@@ -78,6 +78,11 @@
 \usepackage{natbib}
 \bibpunct{(}{)}{,}{a}{}{;}
 \usepackage{bibentry}
+% hyperref >= 2026 stubs \hyper@natlinkbreak as {} under beamer's
+% implicit=false, eating natbib's author-year space; restore natbib's fallback
+\makeatletter
+\def\hyper@natlinkbreak#1#2{#1}
+\makeatother
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -199,7 +204,7 @@
       \end{equation*}
   \item $f_L$, $f_A$, $f_Y$ are unknown but deterministic functions; $U_L$,
     $U_A$, $U_Y$ are exogenous (unobserved) random errors.
-  \item $Y = (Y_b: b = 1, \ldots B)$ is a vector of biomarker outcomes (e.g.,
+  \item $Y = (Y_b: b = 1, \ldots, B)$ is a vector of biomarker outcomes (e.g.,
     $B = 450,000$ CpG sites).
   \item Temporal ordering between variables: $L$ (sex-at-birth, age), $A$
     (smoking, benzene), $Y_b$ (biomarker measurement for site $b$).
@@ -220,7 +225,7 @@
   \itemsep6pt
   \item \textit{Static} interventions consider replacing $f_A$ with an assigned
     value $a \in \mathcal{A}$ deterministically: ``What if everyone smoked?''
-  \item Generates counterfactual RV $Y(a) = (Y_b(a), b: 1, \ldots B)$: the
+  \item Generates counterfactual RV $Y(a) = (Y_b(a), b = 1, \ldots, B)$: the
     expression of the $B$ biomarkers if $A$ had been set to $a$.
   \item Viewed as \textit{potential outcomes} (POs)~\citep{rubin2005causal},
     $Y_b(1)$ when setting $A=1$ and $Y_b(0)$ when setting $A = 0$.
@@ -275,7 +280,7 @@
 \begin{center}
 \begin{itemize}
   \itemsep6pt
-  \item When sample size is small, $\sigma^2_b$ may be so small (by chance) that
+  \item When sample size is small, $\hat{\sigma}^2_b$ may be so small (by chance) that
     even small effect sizes ($\hat{\beta}_{b} - \beta_{b, H_0}$) yield large
     $t_b$.
   \item False positives! Many biomarkers flagged relevant despite small effect
@@ -284,7 +289,7 @@
     $$
       \tilde{t}_{b} = \frac{\hat{\beta}_{b} - \beta_{b, H_0}}{\tilde{\sigma}_b}
       \quad \text{where} \quad
-      \tilde{\sigma}^2_b = \frac{\sigma^2_b d_b + \sigma^2_0 d_0}{d_b + d_0}
+      \tilde{\sigma}^2_b = \frac{\hat{\sigma}^2_b d_b + \hat{\sigma}^2_0 d_0}{d_b + d_0}
     $$
   \item Helps reduce erroneously large $t_b$ by ``averaging out'' low variance
     across each of the many biomarkers.
@@ -498,7 +503,7 @@ issues in the exposure mechanism.
     $\tilde{\sigma}_b^2$, for stabilized hypothesis testing across CpGs.
   \item Applied Holm's procedure to control the family-wise error rate (FWER),
     tagging 1173 CpG sites as differentially methylated.
-  \item Top CpG sites (cg05575921) located in AHRR gene, previously identified
+  \item Top CpG site (cg05575921) located in the AHRR gene, previously identified
     in at least 30 epigenome-wide association studies on impact of smoking
     exposure on blood and lung tissues.
 \end{enumerate}
